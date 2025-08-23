@@ -22,6 +22,12 @@ public class Proyecto002BZ {
 
 	private ProyectoRepository proyectoRepository;
 	
+	
+	
+	public Proyecto002BZ(ProyectoRepository repository) {
+		this.proyectoRepository = repository;
+	}
+
 	public ResponseEntity<RSB031> listar(final RQSV039 rqsv039) {
 		RSB031 rsb031 = rqsv039.getRsb031();
 		byte elementos = rqsv039.getElementos();

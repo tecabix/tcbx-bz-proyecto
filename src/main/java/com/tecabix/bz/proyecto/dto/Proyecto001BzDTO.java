@@ -5,6 +5,7 @@ import com.tecabix.db.entity.CatalogoTipo;
 import com.tecabix.db.repository.CatalogoRepository;
 import com.tecabix.db.repository.ProyectoRepository;
 import com.tecabix.db.repository.TrabajadorRepository;
+import com.tecabix.db.repository.UsuarioRepository;
 
 public class Proyecto001BzDTO {
 	private ProyectoRepository proyectoRepository;
@@ -13,6 +14,7 @@ public class Proyecto001BzDTO {
 	private Catalogo nuevo;
 	private Catalogo porHacer;
 	private CatalogoTipo tipoPrioridad;
+	private UsuarioRepository usuarioRepository;
 	
 	public ProyectoRepository getProyectoRepository() {
 		return proyectoRepository;
@@ -50,4 +52,11 @@ public class Proyecto001BzDTO {
 	public void setTipoPrioridad(CatalogoTipo tipoPrioridad) {
 		this.tipoPrioridad = tipoPrioridad;
 	}
+	public UsuarioRepository getUsuarioRepository() {
+		return usuarioRepository;
+	}
+	public void setUsuarioRepository(UsuarioRepository usuarioRepository) {
+		this.usuarioRepository = usuarioRepository;
+	}
+	
 }

@@ -11,9 +11,11 @@ import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.CatalogoTipo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.Trabajador;
+import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.CatalogoRepository;
 import com.tecabix.db.repository.ProyectoRepository;
 import com.tecabix.db.repository.TrabajadorRepository;
+import com.tecabix.db.repository.UsuarioRepository;
 import com.tecabix.res.b.RSB030;
 import com.tecabix.sv.rq.RQSV038;
 
@@ -28,7 +30,8 @@ public class Proyecto001BZ {
 	private final TrabajadorRepository trabajadorRepository;
 	private final Catalogo nuevo;
 	private final Catalogo porHacer;
-	private final CatalogoTipo tipoPrioridad;	
+	private final CatalogoTipo tipoPrioridad;
+	private final UsuarioRepository usuarioRepository;
 	
 	public Proyecto001BZ(Proyecto001BzDTO dto) {
 		this.proyectoRepository = dto.getProyectoRepository();
@@ -37,6 +40,7 @@ public class Proyecto001BZ {
 		this.nuevo = dto.getNuevo();
 		this.porHacer = dto.getPorHacer();
 		this.tipoPrioridad = dto.getTipoPrioridad();
+		this.usuarioRepository = dto.getUsuarioRepository();
 	}
 
 	public ResponseEntity<RSB030> crear(final RQSV038 rqsv038) {
@@ -57,7 +61,11 @@ public class Proyecto001BZ {
 		if(!proyecto.getPrioridad().getCatalogoTipo().equals(tipoPrioridad)) {
 			return response.notFound("La prioridad no es valida");
 		}
-		
+		Optional<Usuario> usuarioOp = usuarioRepository.findByClave(rqsv038.getRevisor());
+		if(usuarioOp.isEmpty()) {
+			return response.notFound("No se encontro el usuario responsable");
+		}
+		proyecto.setRevisor(usuarioOp.get());
 		proyecto.setClave(UUID.randomUUID());
 		proyecto.setDescripcion(rqsv038.getDescripcion());
 		proyecto.setEstatus(porHacer);

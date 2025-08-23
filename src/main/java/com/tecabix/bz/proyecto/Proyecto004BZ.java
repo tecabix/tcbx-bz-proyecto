@@ -23,66 +23,90 @@ public class Proyecto004BZ {
 	private ProyectoRepository proyectoRepository;
 	private ProyectoComentarioRepository proyectoComentarioRepository;
 
-	private Catalogo POR_HACER;
+	private Catalogo NUEVO;
 	private Catalogo ANALISIS;
 	private Catalogo DESARROLLO;
 	private Catalogo CONSTRUCCION;
 	private Catalogo PRUEBA;
 	private Catalogo QA;
 	private Catalogo PRODUCCION;
-	private Catalogo LISTO;
+	private Catalogo LIBERADO;
 	private Catalogo DESCARTADO;
+	
+	private Catalogo POR_HACER;
+	private Catalogo LISTO;
 	
 	private Usuario usuario;
 	
-	public ResponseEntity<RSB033> actulizarEtapa(final RQSV041 rqsv040) {
-		RSB033 rsb032 = rqsv040.getRsb033();
-		Sesion sesion = rqsv040.getSesion();
-		Optional<Catalogo> etapaOp = catalogoRepository.findByClave(rqsv040.getEtapa());
+	public ResponseEntity<RSB033> actulizarEtapa(final RQSV041 rqsv041) {
+		RSB033 rsb032 = rqsv041.getRsb033();
+		Sesion sesion = rqsv041.getSesion();
+		Optional<Catalogo> etapaOp = catalogoRepository.findByClave(rqsv041.getEtapa());
 		if(etapaOp.isEmpty()) {
 			return rsb032.notFound("No se encontro la etapa");
 		}
-		Optional<Proyecto> proyectoOp = proyectoRepository.findByClave(rqsv040.getProyecto());
+		Optional<Proyecto> proyectoOp = proyectoRepository.findByClave(rqsv041.getProyecto());
 		if(proyectoOp.isEmpty()) {
 			return rsb032.notFound("No se encontro el proyecto");
 		}
 		Catalogo etapa = etapaOp.get();
 		Proyecto proyecto = proyectoOp.get();
 		
-		if(etapa.equals(POR_HACER)) {
+		if(etapa.equals(NUEVO)) {
 			if(!proyecto.getEtapa().equals(ANALISIS)) {
-				return rsb032.badRequest("No se pude cambiar el estatus.");
+				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
 		} else if(etapa.equals(ANALISIS)) {
-			if(!proyecto.getEtapa().equals(POR_HACER) || !proyecto.getEtapa().equals(DESARROLLO)) {
-				return rsb032.badRequest("No se pude cambiar el estatus.");
+			if(!proyecto.getEtapa().equals(NUEVO) && !proyecto.getEtapa().equals(DESARROLLO)) {
+				return rsb032.badRequest("No se pude cambiar la etapa.");
+			}
+			if(proyecto.getEtapa().equals(NUEVO) && !proyecto.getEstatus().equals(LISTO)) {
+				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(DESARROLLO)) {
-			if(!proyecto.getEtapa().equals(ANALISIS) || !proyecto.getEtapa().equals(CONSTRUCCION)) {
-				return rsb032.badRequest("No se pude cambiar el estatus.");
+			if(!proyecto.getEtapa().equals(ANALISIS) && !proyecto.getEtapa().equals(CONSTRUCCION) && !proyecto.getEtapa().equals(PRUEBA) && !proyecto.getEtapa().equals(QA)) {
+				return rsb032.badRequest("No se pude cambiar la etapa.");
+			}
+			if(proyecto.getEtapa().equals(ANALISIS) && !proyecto.getEstatus().equals(LISTO)) {
+				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(CONSTRUCCION)) {
-			if(!proyecto.getEtapa().equals(DESARROLLO) || !proyecto.getEtapa().equals(PRUEBA)) {
-				return rsb032.badRequest("No se pude cambiar el estatus.");
+			if(!proyecto.getEtapa().equals(DESARROLLO) && !proyecto.getEtapa().equals(PRUEBA)) {
+				return rsb032.badRequest("No se pude cambiar la etapa.");
+			}
+			if(proyecto.getEtapa().equals(DESARROLLO) && !proyecto.getEstatus().equals(LISTO)) {
+				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(PRUEBA)) {
-			if(!proyecto.getEtapa().equals(CONSTRUCCION) || !proyecto.getEtapa().equals(QA)) {
-				return rsb032.badRequest("No se pude cambiar el estatus.");
+			if(!proyecto.getEtapa().equals(CONSTRUCCION) && !proyecto.getEtapa().equals(QA)) {
+				return rsb032.badRequest("No se pude cambiar la etapa.");
+			}
+			if(proyecto.getEtapa().equals(CONSTRUCCION) && !proyecto.getEstatus().equals(LISTO)) {
+				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(QA)) {
-			if(!proyecto.getEtapa().equals(PRUEBA) || !proyecto.getEtapa().equals(PRODUCCION)) {
-				return rsb032.badRequest("No se pude cambiar el estatus.");
+			if(!proyecto.getEtapa().equals(PRUEBA) && !proyecto.getEtapa().equals(PRODUCCION)) {
+				return rsb032.badRequest("No se pude cambiar la etapa.");
+			}
+			if(proyecto.getEtapa().equals(PRUEBA) && !proyecto.getEstatus().equals(LISTO)) {
+				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(PRODUCCION)) {
-			if(!proyecto.getEtapa().equals(QA) || !proyecto.getEtapa().equals(LISTO)) {
-				return rsb032.badRequest("No se pude cambiar el estatus.");
+			if(!proyecto.getEtapa().equals(QA) && !proyecto.getEtapa().equals(LIBERADO)) {
+				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
-		} else if(etapa.equals(LISTO)) {
-			if(!proyecto.getEtapa().equals(PRODUCCION)) {
-				return rsb032.badRequest("No se pude cambiar el estatus.");
+			if(proyecto.getEtapa().equals(QA) && !proyecto.getEstatus().equals(LISTO)) {
+				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
+			}
+		} else if(etapa.equals(LIBERADO)) {
+			if(!proyecto.getEtapa().equals(PRODUCCION) || !proyecto.getEstatus().equals(LISTO)) {
+				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
 		} else if(!etapa.equals(DESCARTADO)) {
-			return rsb032.badRequest("No se pude cambiar el estatus.");
+			return rsb032.badRequest("No se pude cambiar la etapa.");
+		}
+		if(!etapa.equals(DESCARTADO)) {
+			proyecto.setEstatus(POR_HACER);
 		}
 		String etapaVieja = proyecto.getEtapa().getNombre();
 		
@@ -95,7 +119,7 @@ public class Proyecto004BZ {
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setClave(UUID.randomUUID());
-		comentario.setComentario("El usuario ["+sesion.getUsuario().getNombre()+"|"+sesion.getUsuario().getClave()+"] cambio el estatus de "+etapaVieja+" a "+etapaNueva+".");
+		comentario.setComentario("El usuario ["+sesion.getUsuario().getNombre()+"|"+sesion.getUsuario().getClave()+"] cambio la etapa de "+etapaVieja+" a "+etapaNueva+".");
 		comentario.setFechaCreacion(LocalDateTime.now());
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setIdUsuarioModificado(sesion.getUsuario().getId());

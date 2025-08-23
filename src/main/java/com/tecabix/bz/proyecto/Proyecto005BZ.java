@@ -17,6 +17,10 @@ import com.tecabix.db.repository.ProyectoRepository;
 import com.tecabix.res.b.RSB034;
 import com.tecabix.sv.rq.RQSV042;
 
+/**
+*
+* @author Ramirez Urrutia Angel Abinadi
+*/
 public class Proyecto005BZ {
 	
 	private CatalogoRepository catalogoRepository;
@@ -34,50 +38,50 @@ public class Proyecto005BZ {
 	private Usuario usuario;
 	
 	public ResponseEntity<RSB034> actulizarEstatus(final RQSV042 rqsv042) {
-		RSB034 rsb032 = rqsv042.getRsb034();
+		RSB034 rsb034 = rqsv042.getRsb034();
 		Sesion sesion = rqsv042.getSesion();
 		
 		Optional<Catalogo> estatusOp = catalogoRepository.findByClave(rqsv042.getEtapa());
 		if(estatusOp.isEmpty()) {
-			return rsb032.notFound("No se encontro la etapa");
+			return rsb034.notFound("No se encontro la etapa");
 		}
 		Optional<Proyecto> proyectoOp = proyectoRepository.findByClave(rqsv042.getProyecto());
 		if(proyectoOp.isEmpty()) {
-			return rsb032.notFound("No se encontro el proyecto");
+			return rsb034.notFound("No se encontro el proyecto");
 		}
 		Catalogo estatus = estatusOp.get();
 		Proyecto proyecto = proyectoOp.get();
 		
 		if(estatus.equals(POR_HACER)) {
 			if(!proyecto.getEstatus().equals(EN_PROCESO)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
 		} else if(estatus.equals(EN_PROCESO)) {
 			if(!proyecto.getEstatus().equals(POR_HACER) && !proyecto.getEtapa().equals(CON_OBSERVACIONES) && !proyecto.getEtapa().equals(EN_PAUSA) && !proyecto.getEtapa().equals(BLOQUEADO)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
 		} else if(estatus.equals(EN_REVISION)) {
 			if(!proyecto.getEstatus().equals(EN_PROCESO)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
 		} else if(estatus.equals(LISTO)) {
 			if(!proyecto.getEtapa().equals(EN_REVISION) || !sesion.getUsuario().equals(proyecto.getRevisor())) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
 		} else if(estatus.equals(EN_PAUSA)) {
 			if(!proyecto.getEtapa().equals(EN_PROCESO)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
 		} else if(estatus.equals(BLOQUEADO)) {
 			if(!proyecto.getEtapa().equals(EN_PROCESO)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
 		} else if(estatus.equals(CON_OBSERVACIONES)) {
 			if(!proyecto.getEtapa().equals(EN_REVISION) || !sesion.getUsuario().equals(proyecto.getRevisor())) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
 		} else {
-			return rsb032.badRequest("No se pude cambiar la etapa.");
+			return rsb034.badRequest("No se pude cambiar la etapa.");
 		}
 		
 		String estatusViejo = proyecto.getEtapa().getNombre();
@@ -99,6 +103,6 @@ public class Proyecto005BZ {
 		comentario.setUsuario(usuario);
 		comentario.setIdProyecto(proyecto.getId());
 		proyectoComentarioRepository.save(comentario);
-		return rsb032.ok(proyecto);
+		return rsb034.ok(proyecto);
 	}
 }

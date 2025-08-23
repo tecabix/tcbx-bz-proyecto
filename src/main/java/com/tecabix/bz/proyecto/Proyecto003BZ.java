@@ -16,6 +16,10 @@ import com.tecabix.res.a.RSA026;
 import com.tecabix.res.b.RSB032;
 import com.tecabix.sv.rq.RQSV040;
 
+/**
+*
+* @author Ramirez Urrutia Angel Abinadi
+*/
 public class Proyecto003BZ {
 
 	private ProyectoRepository proyectoRepository;

@@ -20,9 +20,7 @@ import com.tecabix.sv.rq.RQSV039;
 */
 public class Proyecto002BZ {
 
-	private ProyectoRepository proyectoRepository;
-	
-	
+	private final ProyectoRepository proyectoRepository;
 	
 	public Proyecto002BZ(ProyectoRepository repository) {
 		this.proyectoRepository = repository;

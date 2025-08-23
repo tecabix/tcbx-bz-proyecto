@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 
+import com.tecabix.bz.proyecto.dto.Proyecto004BzDTO;
 import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
@@ -23,25 +24,46 @@ import com.tecabix.sv.rq.RQSV041;
 */
 public class Proyecto004BZ {
 	
-	private CatalogoRepository catalogoRepository;
-	private ProyectoRepository proyectoRepository;
-	private ProyectoComentarioRepository proyectoComentarioRepository;
+	private final CatalogoRepository catalogoRepository;
+	private final ProyectoRepository proyectoRepository;
+	private final ProyectoComentarioRepository proyectoComentarioRepository;
 
-	private Catalogo NUEVO;
-	private Catalogo ANALISIS;
-	private Catalogo DESARROLLO;
-	private Catalogo CONSTRUCCION;
-	private Catalogo PRUEBA;
-	private Catalogo QA;
-	private Catalogo PRODUCCION;
-	private Catalogo LIBERADO;
-	private Catalogo DESCARTADO;
+	private final Catalogo nuevo;
+	private final Catalogo analisis;
+	private final Catalogo desarrollo;
+	private final Catalogo construccion;
+	private final Catalogo prueba;
+	private final Catalogo calidad;
+	private final Catalogo produccion;
+	private final Catalogo liberado;
+	private final Catalogo descartado;
 	
-	private Catalogo POR_HACER;
-	private Catalogo LISTO;
+	private final Catalogo porHacer;
+	private final Catalogo listo;
 	
-	private Usuario usuario;
+	private final Usuario usuario;
 	
+	public Proyecto004BZ(final Proyecto004BzDTO dto) {
+	    this.catalogoRepository = dto.getCatalogoRepository();
+	    this.proyectoRepository = dto.getProyectoRepository();
+	    this.proyectoComentarioRepository = dto.getProyectoComentarioRepository();
+
+	    this.nuevo = dto.getNuevo();
+	    this.analisis = dto.getAnalisis();
+	    this.desarrollo = dto.getDesarrollo();
+	    this.construccion = dto.getConstruccion();
+	    this.prueba = dto.getPrueba();
+	    this.calidad = dto.getCalidad();
+	    this.produccion = dto.getProduccion();
+	    this.liberado = dto.getLiberado();
+	    this.descartado = dto.getDescartado();
+
+	    this.porHacer = dto.getPorHacer();
+	    this.listo = dto.getListo();
+
+	    this.usuario = dto.getUsuario();
+	}
+
 	public ResponseEntity<RSB033> actulizarEtapa(final RQSV041 rqsv041) {
 		RSB033 rsb032 = rqsv041.getRsb033();
 		Sesion sesion = rqsv041.getSesion();
@@ -56,61 +78,61 @@ public class Proyecto004BZ {
 		Catalogo etapa = etapaOp.get();
 		Proyecto proyecto = proyectoOp.get();
 		
-		if(etapa.equals(NUEVO)) {
-			if(!proyecto.getEtapa().equals(ANALISIS)) {
+		if(etapa.equals(nuevo)) {
+			if(!proyecto.getEtapa().equals(analisis)) {
 				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
-		} else if(etapa.equals(ANALISIS)) {
-			if(!proyecto.getEtapa().equals(NUEVO) && !proyecto.getEtapa().equals(DESARROLLO)) {
+		} else if(etapa.equals(analisis)) {
+			if(!proyecto.getEtapa().equals(nuevo) && !proyecto.getEtapa().equals(desarrollo)) {
 				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
-			if(proyecto.getEtapa().equals(NUEVO) && !proyecto.getEstatus().equals(LISTO)) {
+			if(proyecto.getEtapa().equals(nuevo) && !proyecto.getEstatus().equals(listo)) {
 				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
-		} else if(etapa.equals(DESARROLLO)) {
-			if(!proyecto.getEtapa().equals(ANALISIS) && !proyecto.getEtapa().equals(CONSTRUCCION) && !proyecto.getEtapa().equals(PRUEBA) && !proyecto.getEtapa().equals(QA)) {
+		} else if(etapa.equals(desarrollo)) {
+			if(!proyecto.getEtapa().equals(analisis) && !proyecto.getEtapa().equals(construccion) && !proyecto.getEtapa().equals(prueba) && !proyecto.getEtapa().equals(calidad)) {
 				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
-			if(proyecto.getEtapa().equals(ANALISIS) && !proyecto.getEstatus().equals(LISTO)) {
+			if(proyecto.getEtapa().equals(analisis) && !proyecto.getEstatus().equals(listo)) {
 				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
-		} else if(etapa.equals(CONSTRUCCION)) {
-			if(!proyecto.getEtapa().equals(DESARROLLO) && !proyecto.getEtapa().equals(PRUEBA)) {
+		} else if(etapa.equals(construccion)) {
+			if(!proyecto.getEtapa().equals(desarrollo) && !proyecto.getEtapa().equals(prueba)) {
 				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
-			if(proyecto.getEtapa().equals(DESARROLLO) && !proyecto.getEstatus().equals(LISTO)) {
+			if(proyecto.getEtapa().equals(desarrollo) && !proyecto.getEstatus().equals(listo)) {
 				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
-		} else if(etapa.equals(PRUEBA)) {
-			if(!proyecto.getEtapa().equals(CONSTRUCCION) && !proyecto.getEtapa().equals(QA)) {
+		} else if(etapa.equals(prueba)) {
+			if(!proyecto.getEtapa().equals(construccion) && !proyecto.getEtapa().equals(calidad)) {
 				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
-			if(proyecto.getEtapa().equals(CONSTRUCCION) && !proyecto.getEstatus().equals(LISTO)) {
+			if(proyecto.getEtapa().equals(construccion) && !proyecto.getEstatus().equals(listo)) {
 				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
-		} else if(etapa.equals(QA)) {
-			if(!proyecto.getEtapa().equals(PRUEBA) && !proyecto.getEtapa().equals(PRODUCCION)) {
+		} else if(etapa.equals(calidad)) {
+			if(!proyecto.getEtapa().equals(prueba) && !proyecto.getEtapa().equals(produccion)) {
 				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
-			if(proyecto.getEtapa().equals(PRUEBA) && !proyecto.getEstatus().equals(LISTO)) {
+			if(proyecto.getEtapa().equals(prueba) && !proyecto.getEstatus().equals(listo)) {
 				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
-		} else if(etapa.equals(PRODUCCION)) {
-			if(!proyecto.getEtapa().equals(QA) && !proyecto.getEtapa().equals(LIBERADO)) {
+		} else if(etapa.equals(produccion)) {
+			if(!proyecto.getEtapa().equals(calidad) && !proyecto.getEtapa().equals(liberado)) {
 				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
-			if(proyecto.getEtapa().equals(QA) && !proyecto.getEstatus().equals(LISTO)) {
+			if(proyecto.getEtapa().equals(calidad) && !proyecto.getEstatus().equals(listo)) {
 				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
-		} else if(etapa.equals(LIBERADO)) {
-			if(!proyecto.getEtapa().equals(PRODUCCION) || !proyecto.getEstatus().equals(LISTO)) {
+		} else if(etapa.equals(liberado)) {
+			if(!proyecto.getEtapa().equals(produccion) || !proyecto.getEstatus().equals(listo)) {
 				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
-		} else if(!etapa.equals(DESCARTADO)) {
+		} else if(!etapa.equals(descartado)) {
 			return rsb032.badRequest("No se pude cambiar la etapa.");
 		}
-		if(!etapa.equals(DESCARTADO)) {
-			proyecto.setEstatus(POR_HACER);
+		if(!etapa.equals(descartado)) {
+			proyecto.setEstatus(porHacer);
 		}
 		String etapaVieja = proyecto.getEtapa().getNombre();
 		

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 
+import com.tecabix.bz.proyecto.dto.Proyecto006BzDTO;
 import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.CatalogoTipo;
 import com.tecabix.db.entity.Proyecto;
@@ -24,12 +25,20 @@ import com.tecabix.sv.rq.RQSV043;
 */
 public class Proyecto006BZ {
 
-	private UsuarioRepository usuarioRepository;
-	private ProyectoRepository proyectoRepository;
-	private ProyectoComentarioRepository proyectoComentarioRepository;
-	private CatalogoTipo PRIORIDAD;
-	private Usuario usuario;
+	private final UsuarioRepository usuarioRepository;
+	private final ProyectoRepository proyectoRepository;
+	private final ProyectoComentarioRepository proyectoComentarioRepository;
+	private final CatalogoTipo prioridad;
+	private final Usuario usuario;
 	
+	public Proyecto006BZ(final Proyecto006BzDTO dto) {
+	    this.usuarioRepository = dto.getUsuarioRepository();
+	    this.proyectoRepository = dto.getProyectoRepository();
+	    this.proyectoComentarioRepository = dto.getProyectoComentarioRepository();
+	    this.prioridad = dto.getPrioridad();
+	    this.usuario = dto.getUsuario();
+	}
+
 	public ResponseEntity<RSB035> actulizar(final RQSV043 rqsv043) {
 		RSB035 rsb035 = rqsv043.getRsb035();
 		Sesion sesion = rqsv043.getSesion();
@@ -58,7 +67,7 @@ public class Proyecto006BZ {
 		}
 		if(!rqsv043.getPrioridad().equals(proyecto.getPrioridad().getClave())) {
 			cambio.append(", cambio la prioridad");
-			Optional<Catalogo> optional = PRIORIDAD.getCatalogos().stream().filter(x->x.getClave() == rqsv043.getPrioridad()).findAny();
+			Optional<Catalogo> optional = prioridad.getCatalogos().stream().filter(x->x.getClave() == rqsv043.getPrioridad()).findAny();
 			if(optional.isEmpty()) {
 				return rsb035.notFound("No se encontro la prioridad a actualizar");
 			}

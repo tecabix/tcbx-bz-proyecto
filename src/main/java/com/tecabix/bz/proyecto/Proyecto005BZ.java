@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 
+import com.tecabix.bz.proyecto.dto.Proyecto005BzDTO;
 import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
@@ -23,20 +24,37 @@ import com.tecabix.sv.rq.RQSV042;
 */
 public class Proyecto005BZ {
 	
-	private CatalogoRepository catalogoRepository;
-	private ProyectoRepository proyectoRepository;
-	private ProyectoComentarioRepository proyectoComentarioRepository;
+	private final CatalogoRepository catalogoRepository;
+	private final ProyectoRepository proyectoRepository;
+	private final ProyectoComentarioRepository proyectoComentarioRepository;
 
-	private Catalogo POR_HACER;
-	private Catalogo EN_PROCESO;
-	private Catalogo EN_REVISION;
-	private Catalogo LISTO;
-	private Catalogo EN_PAUSA;
-	private Catalogo BLOQUEADO;
-	private Catalogo CON_OBSERVACIONES;
+	private final Catalogo porHacer;
+	private final Catalogo enProceso;
+	private final Catalogo enRevision;
+	private final Catalogo listo;
+	private final Catalogo enPausa;
+	private final Catalogo bloqueado;
+	private final Catalogo conObservaciones;
 	
 	private Usuario usuario;
 	
+	public Proyecto005BZ(final Proyecto005BzDTO dto) {
+	    this.catalogoRepository = dto.getCatalogoRepository();
+	    this.proyectoRepository = dto.getProyectoRepository();
+	    this.proyectoComentarioRepository = dto.getProyectoComentarioRepository();
+
+	    this.porHacer = dto.getPorHacer();
+	    this.enProceso = dto.getEnProceso();
+	    this.enRevision = dto.getEnRevision();
+	    this.listo = dto.getListo();
+	    this.enPausa = dto.getEnPausa();
+	    this.bloqueado = dto.getBloqueado();
+	    this.conObservaciones = dto.getConObservaciones();
+
+	    this.usuario = dto.getUsuario();
+	}
+
+
 	public ResponseEntity<RSB034> actulizarEstatus(final RQSV042 rqsv042) {
 		RSB034 rsb034 = rqsv042.getRsb034();
 		Sesion sesion = rqsv042.getSesion();
@@ -52,32 +70,32 @@ public class Proyecto005BZ {
 		Catalogo estatus = estatusOp.get();
 		Proyecto proyecto = proyectoOp.get();
 		
-		if(estatus.equals(POR_HACER)) {
-			if(!proyecto.getEstatus().equals(EN_PROCESO)) {
+		if(estatus.equals(porHacer)) {
+			if(!proyecto.getEstatus().equals(enProceso)) {
 				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
-		} else if(estatus.equals(EN_PROCESO)) {
-			if(!proyecto.getEstatus().equals(POR_HACER) && !proyecto.getEtapa().equals(CON_OBSERVACIONES) && !proyecto.getEtapa().equals(EN_PAUSA) && !proyecto.getEtapa().equals(BLOQUEADO)) {
+		} else if(estatus.equals(enProceso)) {
+			if(!proyecto.getEstatus().equals(porHacer) && !proyecto.getEtapa().equals(conObservaciones) && !proyecto.getEtapa().equals(enPausa) && !proyecto.getEtapa().equals(bloqueado)) {
 				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
-		} else if(estatus.equals(EN_REVISION)) {
-			if(!proyecto.getEstatus().equals(EN_PROCESO)) {
+		} else if(estatus.equals(enRevision)) {
+			if(!proyecto.getEstatus().equals(enProceso)) {
 				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
-		} else if(estatus.equals(LISTO)) {
-			if(!proyecto.getEtapa().equals(EN_REVISION) || !sesion.getUsuario().equals(proyecto.getRevisor())) {
+		} else if(estatus.equals(listo)) {
+			if(!proyecto.getEtapa().equals(enRevision) || !sesion.getUsuario().equals(proyecto.getRevisor())) {
 				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
-		} else if(estatus.equals(EN_PAUSA)) {
-			if(!proyecto.getEtapa().equals(EN_PROCESO)) {
+		} else if(estatus.equals(enPausa)) {
+			if(!proyecto.getEtapa().equals(enProceso)) {
 				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
-		} else if(estatus.equals(BLOQUEADO)) {
-			if(!proyecto.getEtapa().equals(EN_PROCESO)) {
+		} else if(estatus.equals(bloqueado)) {
+			if(!proyecto.getEtapa().equals(enProceso)) {
 				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
-		} else if(estatus.equals(CON_OBSERVACIONES)) {
-			if(!proyecto.getEtapa().equals(EN_REVISION) || !sesion.getUsuario().equals(proyecto.getRevisor())) {
+		} else if(estatus.equals(conObservaciones)) {
+			if(!proyecto.getEtapa().equals(enRevision) || !sesion.getUsuario().equals(proyecto.getRevisor())) {
 				return rsb034.badRequest("No se pude cambiar la etapa.");
 			}
 		} else {

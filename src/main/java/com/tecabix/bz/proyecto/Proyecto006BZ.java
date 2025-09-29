@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 
-import com.tecabix.bz.proyecto.dto.Proyecto006BzDTO;
 import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.CatalogoTipo;
 import com.tecabix.db.entity.Proyecto;
@@ -31,13 +30,15 @@ public class Proyecto006BZ {
 	private final CatalogoTipo prioridad;
 	private final Usuario usuario;
 	
-	public Proyecto006BZ(final Proyecto006BzDTO dto) {
-	    this.usuarioRepository = dto.getUsuarioRepository();
-	    this.proyectoRepository = dto.getProyectoRepository();
-	    this.proyectoComentarioRepository = dto.getProyectoComentarioRepository();
-	    this.prioridad = dto.getPrioridad();
-	    this.usuario = dto.getUsuario();
+	public Proyecto006BZ(UsuarioRepository usuarioRepository, ProyectoRepository proyectoRepository,
+			ProyectoComentarioRepository proyectoComentarioRepository, CatalogoTipo prioridad, Usuario usuario) {
+		this.usuarioRepository = usuarioRepository;
+		this.proyectoRepository = proyectoRepository;
+		this.proyectoComentarioRepository = proyectoComentarioRepository;
+		this.prioridad = prioridad;
+		this.usuario = usuario;
 	}
+
 
 	public ResponseEntity<RSB035> actulizar(final RQSV043 rqsv043) {
 		RSB035 rsb035 = rqsv043.getRsb035();

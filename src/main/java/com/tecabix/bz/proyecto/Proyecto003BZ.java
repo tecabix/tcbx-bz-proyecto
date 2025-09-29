@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 
-import com.tecabix.bz.proyecto.dto.Proyecto003BzDTO;
 import com.tecabix.db.entity.PersonaFisica;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.Usuario;
@@ -26,12 +25,15 @@ public class Proyecto003BZ {
 	private final ProyectoRepository proyectoRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final PersonaFisicaRepository personaFisicaRepository;
-	
-	public Proyecto003BZ(final Proyecto003BzDTO dto) {
-	    this.proyectoRepository = dto.getProyectoRepository();
-	    this.usuarioRepository = dto.getUsuarioRepository();
-	    this.personaFisicaRepository = dto.getPersonaFisicaRepository();
+
+
+	public Proyecto003BZ(ProyectoRepository proyectoRepository, UsuarioRepository usuarioRepository,
+			PersonaFisicaRepository personaFisicaRepository) {
+		this.proyectoRepository = proyectoRepository;
+		this.usuarioRepository = usuarioRepository;
+		this.personaFisicaRepository = personaFisicaRepository;
 	}
+
 
 	public ResponseEntity<RSB032> detalle(final RQSV040 rqsv040) {
 		RSB032 respose = rqsv040.getRsb032();

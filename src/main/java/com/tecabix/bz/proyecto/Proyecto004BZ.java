@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 
-import com.tecabix.bz.proyecto.dto.Proyecto004BzDTO;
 import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
@@ -43,26 +42,30 @@ public class Proyecto004BZ {
 	
 	private final Usuario usuario;
 	
-	public Proyecto004BZ(final Proyecto004BzDTO dto) {
-	    this.catalogoRepository = dto.getCatalogoRepository();
-	    this.proyectoRepository = dto.getProyectoRepository();
-	    this.proyectoComentarioRepository = dto.getProyectoComentarioRepository();
+	
 
-	    this.nuevo = dto.getNuevo();
-	    this.analisis = dto.getAnalisis();
-	    this.desarrollo = dto.getDesarrollo();
-	    this.construccion = dto.getConstruccion();
-	    this.prueba = dto.getPrueba();
-	    this.calidad = dto.getCalidad();
-	    this.produccion = dto.getProduccion();
-	    this.liberado = dto.getLiberado();
-	    this.descartado = dto.getDescartado();
-
-	    this.porHacer = dto.getPorHacer();
-	    this.listo = dto.getListo();
-
-	    this.usuario = dto.getUsuario();
+	public Proyecto004BZ(CatalogoRepository catalogoRepository, ProyectoRepository proyectoRepository,
+			ProyectoComentarioRepository proyectoComentarioRepository, Catalogo nuevo, Catalogo analisis,
+			Catalogo desarrollo, Catalogo construccion, Catalogo prueba, Catalogo calidad, Catalogo produccion,
+			Catalogo liberado, Catalogo descartado, Catalogo porHacer, Catalogo listo, Usuario usuario) {
+		this.catalogoRepository = catalogoRepository;
+		this.proyectoRepository = proyectoRepository;
+		this.proyectoComentarioRepository = proyectoComentarioRepository;
+		this.nuevo = nuevo;
+		this.analisis = analisis;
+		this.desarrollo = desarrollo;
+		this.construccion = construccion;
+		this.prueba = prueba;
+		this.calidad = calidad;
+		this.produccion = produccion;
+		this.liberado = liberado;
+		this.descartado = descartado;
+		this.porHacer = porHacer;
+		this.listo = listo;
+		this.usuario = usuario;
 	}
+
+
 
 	public ResponseEntity<RSB033> actulizarEtapa(final RQSV041 rqsv041) {
 		RSB033 rsb032 = rqsv041.getRsb033();

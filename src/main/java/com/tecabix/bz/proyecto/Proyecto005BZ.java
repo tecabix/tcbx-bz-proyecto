@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 
-import com.tecabix.bz.proyecto.dto.Proyecto005BzDTO;
 import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
@@ -38,22 +37,23 @@ public class Proyecto005BZ {
 	
 	private Usuario usuario;
 	
-	public Proyecto005BZ(final Proyecto005BzDTO dto) {
-	    this.catalogoRepository = dto.getCatalogoRepository();
-	    this.proyectoRepository = dto.getProyectoRepository();
-	    this.proyectoComentarioRepository = dto.getProyectoComentarioRepository();
-
-	    this.porHacer = dto.getPorHacer();
-	    this.enProceso = dto.getEnProceso();
-	    this.enRevision = dto.getEnRevision();
-	    this.listo = dto.getListo();
-	    this.enPausa = dto.getEnPausa();
-	    this.bloqueado = dto.getBloqueado();
-	    this.conObservaciones = dto.getConObservaciones();
-
-	    this.usuario = dto.getUsuario();
+	public Proyecto005BZ(CatalogoRepository catalogoRepository, ProyectoRepository proyectoRepository,
+			ProyectoComentarioRepository proyectoComentarioRepository, Catalogo porHacer, Catalogo enProceso,
+			Catalogo enRevision, Catalogo listo, Catalogo enPausa, Catalogo bloqueado, Catalogo conObservaciones,
+			Usuario usuario) {
+		super();
+		this.catalogoRepository = catalogoRepository;
+		this.proyectoRepository = proyectoRepository;
+		this.proyectoComentarioRepository = proyectoComentarioRepository;
+		this.porHacer = porHacer;
+		this.enProceso = enProceso;
+		this.enRevision = enRevision;
+		this.listo = listo;
+		this.enPausa = enPausa;
+		this.bloqueado = bloqueado;
+		this.conObservaciones = conObservaciones;
+		this.usuario = usuario;
 	}
-
 
 	public ResponseEntity<RSB034> actulizarEstatus(final RQSV042 rqsv042) {
 		RSB034 rsb034 = rqsv042.getRsb034();

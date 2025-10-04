@@ -89,7 +89,7 @@ public class Proyecto004BZ {
 			if(!proyecto.getEtapa().equals(nuevo) && !proyecto.getEtapa().equals(desarrollo)) {
 				return rsb032.badRequest("No se pude cambiar la etapa.");
 			}
-			if(proyecto.getEtapa().equals(nuevo) && !proyecto.getEstatus().equals(listo)) {
+			if(proyecto.getEtapa().equals(nuevo) && !proyecto.getEstatus().equals(porHacer)) {
 				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(desarrollo)) {

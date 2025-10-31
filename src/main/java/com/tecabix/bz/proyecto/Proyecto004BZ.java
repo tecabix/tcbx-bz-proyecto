@@ -155,6 +155,7 @@ public class Proyecto004BZ {
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setUsuario(usuario);
 		comentario.setIdProyecto(proyecto.getId());
+		comentario.setEstatus(proyecto.getEstatus());
 		proyectoComentarioRepository.save(comentario);
 		return rsb032.ok(proyecto);
 	}

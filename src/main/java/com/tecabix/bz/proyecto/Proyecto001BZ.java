@@ -29,24 +29,26 @@ public class Proyecto001BZ {
 	private final TrabajadorRepository trabajadorRepository;
 	private final Catalogo nuevo;
 	private final Catalogo porHacer;
+	private final Catalogo productBacklog;
 	private final CatalogoTipo tipoPrioridad;
+	
+	
 	private final UsuarioRepository usuarioRepository;
 	
 
-
 	public Proyecto001BZ(ProyectoRepository proyectoRepository, CatalogoRepository catalogoRepository,
 			TrabajadorRepository trabajadorRepository, Catalogo nuevo, Catalogo porHacer, CatalogoTipo tipoPrioridad,
-			UsuarioRepository usuarioRepository) {
+			Catalogo productBacklog, UsuarioRepository usuarioRepository) {
+		super();
 		this.proyectoRepository = proyectoRepository;
 		this.catalogoRepository = catalogoRepository;
 		this.trabajadorRepository = trabajadorRepository;
 		this.nuevo = nuevo;
 		this.porHacer = porHacer;
 		this.tipoPrioridad = tipoPrioridad;
+		this.productBacklog = productBacklog;
 		this.usuarioRepository = usuarioRepository;
 	}
-
-
 
 	public ResponseEntity<RSB030> crear(final RQSV038 rqsv038) {
 		RSB030 response = rqsv038.getRsb030();
@@ -82,7 +84,7 @@ public class Proyecto001BZ {
 		proyecto.setInicio(rqsv038.getInicio());
 		proyecto.setNombre(rqsv038.getNombre());
 		proyecto.setUsuarioCreador(rqsv038.getSesion().getUsuario().getId());
-		
+		proyecto.setTipoBacklog(productBacklog);
 		return response.ok(proyectoRepository.save(proyecto));
 	}
 }

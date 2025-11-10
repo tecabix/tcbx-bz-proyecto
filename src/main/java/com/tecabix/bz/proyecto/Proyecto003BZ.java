@@ -90,11 +90,7 @@ public class Proyecto003BZ {
 		}
 		nombres.put(RSA026.MODIFICADOR, nombre);
 		
-		personaFisicaOP = personaFisicaRepository.findByPersona(proyecto.getRevisor().getUsuarioPersona().getPersona().getId());
-		if(personaFisicaOP.isEmpty()) {
-			return respose.notFound("No se encontro la persona que modifico el ticket");
-		}
-		persona = personaFisicaOP.get();
+		persona = proyecto.getRevisor().getPersonaFisica();
 		nombre = persona.getNombre();
 		if(persona.getApellidoPaterno() != null && persona.getApellidoMaterno() != null) {
 			if(!persona.getApellidoPaterno().isBlank() && !persona.getApellidoMaterno().isBlank()) {

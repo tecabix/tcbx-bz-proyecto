@@ -11,10 +11,11 @@ import com.tecabix.db.entity.CatalogoTipo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
 import com.tecabix.db.entity.Sesion;
+import com.tecabix.db.entity.Trabajador;
 import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.ProyectoComentarioRepository;
 import com.tecabix.db.repository.ProyectoRepository;
-import com.tecabix.db.repository.UsuarioRepository;
+import com.tecabix.db.repository.TrabajadorRepository;
 import com.tecabix.res.b.RSB035;
 import com.tecabix.sv.rq.RQSV043;
 
@@ -24,15 +25,16 @@ import com.tecabix.sv.rq.RQSV043;
 */
 public class Proyecto006BZ {
 
-	private final UsuarioRepository usuarioRepository;
+	private final TrabajadorRepository trabajadorRepository;
 	private final ProyectoRepository proyectoRepository;
 	private final ProyectoComentarioRepository proyectoComentarioRepository;
 	private final CatalogoTipo prioridad;
 	private final Usuario usuario;
-	
-	public Proyecto006BZ(UsuarioRepository usuarioRepository, ProyectoRepository proyectoRepository,
+
+	public Proyecto006BZ(TrabajadorRepository trabajadorRepository, ProyectoRepository proyectoRepository,
 			ProyectoComentarioRepository proyectoComentarioRepository, CatalogoTipo prioridad, Usuario usuario) {
-		this.usuarioRepository = usuarioRepository;
+		super();
+		this.trabajadorRepository = trabajadorRepository;
 		this.proyectoRepository = proyectoRepository;
 		this.proyectoComentarioRepository = proyectoComentarioRepository;
 		this.prioridad = prioridad;
@@ -76,9 +78,9 @@ public class Proyecto006BZ {
 		}
 		if(!rqsv043.getRevisor().equals(proyecto.getRevisor().getClave())) {
 			cambio.append(", cambio el revisor");
-			Optional<Usuario> optional = usuarioRepository.findByClave(rqsv043.getRevisor());
+			Optional<Trabajador> optional = trabajadorRepository.findByClave(rqsv043.getRevisor());
 			if(optional.isEmpty()) {
-				return rsb035.notFound("No se encontro el usuario a actualizar");
+				return rsb035.notFound("No se encontro el revisor a actualizar");
 			}
 			proyecto.setRevisor(optional.get());
 		}

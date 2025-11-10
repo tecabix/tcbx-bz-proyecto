@@ -34,6 +34,7 @@ public class Proyecto002BZ {
 	    List<UUID> etapas = rqsv039.getEtapas();
 	    List<UUID> estatus = rqsv039.getEstatus();
 	    List<UUID> prioridad = rqsv039.getPrioridad();
+	    List<UUID> tipoBacklog = rqsv039.getTipoBacklog();
 	    LocalDate fechaMin = rqsv039.getFechaCreacionMin();
 	    LocalDate fechaMax = rqsv039.getFechaCreacionMax();
 	    UUID trabajador = rqsv039.getTrabajador().orElse(null);
@@ -43,8 +44,8 @@ public class Proyecto002BZ {
 	    Sort sort = Sort.by(Sort.Direction.ASC, "id");
 	    Pageable pageable = PageRequest.of(pagina, elementos, sort);
 	    if(rqsv039.getTrabajador().isPresent()) {
-	    	return rsb031.ok(proyectoRepository.findByFilterTrabajador(texto, etapas, estatus, prioridad, fechaMin, fechaMax, prioridad, trabajador, pageable).toList());
+	    	return rsb031.ok(proyectoRepository.findByFilterTrabajador(texto, etapas, estatus, prioridad, fechaMin, fechaMax, tipoBacklog, trabajador, pageable).toList());
 	    }
-	    return rsb031.ok(proyectoRepository.findByFilter(texto, etapas, estatus, prioridad, fechaMin, fechaMax, prioridad, pageable).toList());
+	    return rsb031.ok(proyectoRepository.findByFilter(texto, etapas, estatus, prioridad, fechaMin, fechaMax, tipoBacklog, pageable).toList());
 	}
 }

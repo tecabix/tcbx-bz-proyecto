@@ -16,6 +16,7 @@ import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.ProyectoComentarioRepository;
 import com.tecabix.db.repository.ProyectoRepository;
 import com.tecabix.db.repository.TrabajadorRepository;
+import com.tecabix.db.repository.UsuarioRepository;
 import com.tecabix.res.b.RSB035;
 import com.tecabix.sv.rq.RQSV043;
 
@@ -28,17 +29,19 @@ public class Proyecto006BZ {
 	private final TrabajadorRepository trabajadorRepository;
 	private final ProyectoRepository proyectoRepository;
 	private final ProyectoComentarioRepository proyectoComentarioRepository;
+	private final UsuarioRepository usuarioRepository;
 	private final CatalogoTipo prioridad;
 	private final Usuario usuario;
 
 	public Proyecto006BZ(TrabajadorRepository trabajadorRepository, ProyectoRepository proyectoRepository,
-			ProyectoComentarioRepository proyectoComentarioRepository, CatalogoTipo prioridad, Usuario usuario) {
+			ProyectoComentarioRepository proyectoComentarioRepository, UsuarioRepository usuarioRepository, CatalogoTipo prioridad, Usuario usuario) {
 		super();
 		this.trabajadorRepository = trabajadorRepository;
 		this.proyectoRepository = proyectoRepository;
 		this.proyectoComentarioRepository = proyectoComentarioRepository;
 		this.prioridad = prioridad;
 		this.usuario = usuario;
+		this.usuarioRepository = usuarioRepository;
 	}
 
 
@@ -92,6 +95,10 @@ public class Proyecto006BZ {
 		proyecto.setFechaModificado(LocalDateTime.now());
 		proyectoRepository.save(proyecto);
 		
+
+        Usuario usuario = usuarioRepository.findById(sesion.getUsuario().getId())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
 		ProyectoComentario comentario = new ProyectoComentario();
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());

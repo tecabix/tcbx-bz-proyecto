@@ -73,7 +73,7 @@ public class Proyecto006BZ {
 		}
 		if(!rqsv043.getPrioridad().equals(proyecto.getPrioridad().getClave())) {
 			cambio.append(", cambio la prioridad");
-			Optional<Catalogo> optional = prioridad.getCatalogos().stream().filter(x->x.getClave() == rqsv043.getPrioridad()).findAny();
+			Optional<Catalogo> optional = prioridad.getCatalogos().stream().filter(x->x.getClave().equals(rqsv043.getPrioridad())).findAny();
 			if(optional.isEmpty()) {
 				return rsb035.notFound("No se encontro la prioridad a actualizar");
 			}

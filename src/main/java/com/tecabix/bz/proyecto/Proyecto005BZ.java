@@ -87,11 +87,11 @@ public class Proyecto005BZ {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(enPausa)) {
-			if(!proyecto.getEtapa().equals(enProceso)) {
+			if(!proyecto.getEstatus().equals(enProceso)) {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(bloqueado)) {
-			if(!proyecto.getEtapa().equals(enProceso)) {
+			if(!proyecto.getEstatus().equals(enProceso)) {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(conObservaciones)) {

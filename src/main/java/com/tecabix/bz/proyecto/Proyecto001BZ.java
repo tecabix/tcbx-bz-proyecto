@@ -6,16 +6,13 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 
-import com.tecabix.bz.proyecto.dto.Proyecto001BzDTO;
 import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.CatalogoTipo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.Trabajador;
-import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.CatalogoRepository;
 import com.tecabix.db.repository.ProyectoRepository;
 import com.tecabix.db.repository.TrabajadorRepository;
-import com.tecabix.db.repository.UsuarioRepository;
 import com.tecabix.res.b.RSB030;
 import com.tecabix.sv.rq.RQSV038;
 
@@ -30,17 +27,20 @@ public class Proyecto001BZ {
 	private final TrabajadorRepository trabajadorRepository;
 	private final Catalogo nuevo;
 	private final Catalogo porHacer;
+	private final Catalogo productBacklog;
 	private final CatalogoTipo tipoPrioridad;
-	private final UsuarioRepository usuarioRepository;
 	
-	public Proyecto001BZ(Proyecto001BzDTO dto) {
-		this.proyectoRepository = dto.getProyectoRepository();
-		this.catalogoRepository = dto.getCatalogoRepository();
-		this.trabajadorRepository = dto.getTrabajadorRepository();
-		this.nuevo = dto.getNuevo();
-		this.porHacer = dto.getPorHacer();
-		this.tipoPrioridad = dto.getTipoPrioridad();
-		this.usuarioRepository = dto.getUsuarioRepository();
+
+	public Proyecto001BZ(ProyectoRepository proyectoRepository, CatalogoRepository catalogoRepository,
+			TrabajadorRepository trabajadorRepository, Catalogo nuevo, Catalogo porHacer, CatalogoTipo tipoPrioridad,
+			Catalogo productBacklog) {
+		this.proyectoRepository = proyectoRepository;
+		this.catalogoRepository = catalogoRepository;
+		this.trabajadorRepository = trabajadorRepository;
+		this.nuevo = nuevo;
+		this.porHacer = porHacer;
+		this.tipoPrioridad = tipoPrioridad;
+		this.productBacklog = productBacklog;
 	}
 
 	public ResponseEntity<RSB030> crear(final RQSV038 rqsv038) {
@@ -61,11 +61,11 @@ public class Proyecto001BZ {
 		if(!proyecto.getPrioridad().getCatalogoTipo().equals(tipoPrioridad)) {
 			return response.notFound("La prioridad no es valida");
 		}
-		Optional<Usuario> usuarioOp = usuarioRepository.findByClave(rqsv038.getRevisor());
-		if(usuarioOp.isEmpty()) {
+		Optional<Trabajador> revisor= trabajadorRepository.findByClave(rqsv038.getRevisor());
+		if(revisor.isEmpty()) {
 			return response.notFound("No se encontro el usuario responsable");
 		}
-		proyecto.setRevisor(usuarioOp.get());
+		proyecto.setRevisor(revisor.get());
 		proyecto.setClave(UUID.randomUUID());
 		proyecto.setDescripcion(rqsv038.getDescripcion());
 		proyecto.setEstatus(porHacer);
@@ -77,7 +77,7 @@ public class Proyecto001BZ {
 		proyecto.setInicio(rqsv038.getInicio());
 		proyecto.setNombre(rqsv038.getNombre());
 		proyecto.setUsuarioCreador(rqsv038.getSesion().getUsuario().getId());
-		
+		proyecto.setTipoBacklog(productBacklog);
 		return response.ok(proyectoRepository.save(proyecto));
 	}
 }

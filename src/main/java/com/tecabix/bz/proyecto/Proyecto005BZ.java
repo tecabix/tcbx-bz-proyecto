@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 
-import com.tecabix.bz.proyecto.dto.Proyecto005BzDTO;
 import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
@@ -38,24 +37,25 @@ public class Proyecto005BZ {
 	
 	private Usuario usuario;
 	
-	public Proyecto005BZ(final Proyecto005BzDTO dto) {
-	    this.catalogoRepository = dto.getCatalogoRepository();
-	    this.proyectoRepository = dto.getProyectoRepository();
-	    this.proyectoComentarioRepository = dto.getProyectoComentarioRepository();
-
-	    this.porHacer = dto.getPorHacer();
-	    this.enProceso = dto.getEnProceso();
-	    this.enRevision = dto.getEnRevision();
-	    this.listo = dto.getListo();
-	    this.enPausa = dto.getEnPausa();
-	    this.bloqueado = dto.getBloqueado();
-	    this.conObservaciones = dto.getConObservaciones();
-
-	    this.usuario = dto.getUsuario();
+	public Proyecto005BZ(CatalogoRepository catalogoRepository, ProyectoRepository proyectoRepository,
+			ProyectoComentarioRepository proyectoComentarioRepository, Catalogo porHacer, Catalogo enProceso,
+			Catalogo enRevision, Catalogo listo, Catalogo enPausa, Catalogo bloqueado, Catalogo conObservaciones,
+			Usuario usuario) {
+		super();
+		this.catalogoRepository = catalogoRepository;
+		this.proyectoRepository = proyectoRepository;
+		this.proyectoComentarioRepository = proyectoComentarioRepository;
+		this.porHacer = porHacer;
+		this.enProceso = enProceso;
+		this.enRevision = enRevision;
+		this.listo = listo;
+		this.enPausa = enPausa;
+		this.bloqueado = bloqueado;
+		this.conObservaciones = conObservaciones;
+		this.usuario = usuario;
 	}
 
-
-	public ResponseEntity<RSB034> actulizarEstatus(final RQSV042 rqsv042) {
+	public ResponseEntity<RSB034> actualizarEstatus(final RQSV042 rqsv042) {
 		RSB034 rsb034 = rqsv042.getRsb034();
 		Sesion sesion = rqsv042.getSesion();
 		
@@ -69,37 +69,37 @@ public class Proyecto005BZ {
 		}
 		Catalogo estatus = estatusOp.get();
 		Proyecto proyecto = proyectoOp.get();
-		
+
 		if(estatus.equals(porHacer)) {
 			if(!proyecto.getEstatus().equals(enProceso)) {
-				return rsb034.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(enProceso)) {
 			if(!proyecto.getEstatus().equals(porHacer) && !proyecto.getEtapa().equals(conObservaciones) && !proyecto.getEtapa().equals(enPausa) && !proyecto.getEtapa().equals(bloqueado)) {
-				return rsb034.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(enRevision)) {
 			if(!proyecto.getEstatus().equals(enProceso)) {
-				return rsb034.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(listo)) {
 			if(!proyecto.getEtapa().equals(enRevision) || !sesion.getUsuario().equals(proyecto.getRevisor())) {
-				return rsb034.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(enPausa)) {
-			if(!proyecto.getEtapa().equals(enProceso)) {
-				return rsb034.badRequest("No se pude cambiar la etapa.");
+			if(!proyecto.getEstatus().equals(enProceso)) {
+				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(bloqueado)) {
-			if(!proyecto.getEtapa().equals(enProceso)) {
-				return rsb034.badRequest("No se pude cambiar la etapa.");
+			if(!proyecto.getEstatus().equals(enProceso)) {
+				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(conObservaciones)) {
 			if(!proyecto.getEtapa().equals(enRevision) || !sesion.getUsuario().equals(proyecto.getRevisor())) {
-				return rsb034.badRequest("No se pude cambiar la etapa.");
+				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else {
-			return rsb034.badRequest("No se pude cambiar la etapa.");
+			return rsb034.badRequest("No se puede cambiar el estatus.");
 		}
 		
 		String estatusViejo = proyecto.getEtapa().getNombre();
@@ -120,6 +120,7 @@ public class Proyecto005BZ {
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setUsuario(usuario);
 		comentario.setIdProyecto(proyecto.getId());
+		comentario.setEstatus(proyecto.getEstatus());
 		proyectoComentarioRepository.save(comentario);
 		return rsb034.ok(proyecto);
 	}

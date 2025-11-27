@@ -6,15 +6,16 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 
-import com.tecabix.bz.proyecto.dto.Proyecto006BzDTO;
 import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.CatalogoTipo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
 import com.tecabix.db.entity.Sesion;
+import com.tecabix.db.entity.Trabajador;
 import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.ProyectoComentarioRepository;
 import com.tecabix.db.repository.ProyectoRepository;
+import com.tecabix.db.repository.TrabajadorRepository;
 import com.tecabix.db.repository.UsuarioRepository;
 import com.tecabix.res.b.RSB035;
 import com.tecabix.sv.rq.RQSV043;
@@ -25,19 +26,24 @@ import com.tecabix.sv.rq.RQSV043;
 */
 public class Proyecto006BZ {
 
-	private final UsuarioRepository usuarioRepository;
+	private final TrabajadorRepository trabajadorRepository;
 	private final ProyectoRepository proyectoRepository;
 	private final ProyectoComentarioRepository proyectoComentarioRepository;
+	private final UsuarioRepository usuarioRepository;
 	private final CatalogoTipo prioridad;
 	private final Usuario usuario;
-	
-	public Proyecto006BZ(final Proyecto006BzDTO dto) {
-	    this.usuarioRepository = dto.getUsuarioRepository();
-	    this.proyectoRepository = dto.getProyectoRepository();
-	    this.proyectoComentarioRepository = dto.getProyectoComentarioRepository();
-	    this.prioridad = dto.getPrioridad();
-	    this.usuario = dto.getUsuario();
+
+	public Proyecto006BZ(TrabajadorRepository trabajadorRepository, ProyectoRepository proyectoRepository,
+			ProyectoComentarioRepository proyectoComentarioRepository, UsuarioRepository usuarioRepository, CatalogoTipo prioridad, Usuario usuario) {
+		super();
+		this.trabajadorRepository = trabajadorRepository;
+		this.proyectoRepository = proyectoRepository;
+		this.proyectoComentarioRepository = proyectoComentarioRepository;
+		this.prioridad = prioridad;
+		this.usuario = usuario;
+		this.usuarioRepository = usuarioRepository;
 	}
+
 
 	public ResponseEntity<RSB035> actulizar(final RQSV043 rqsv043) {
 		RSB035 rsb035 = rqsv043.getRsb035();
@@ -67,7 +73,7 @@ public class Proyecto006BZ {
 		}
 		if(!rqsv043.getPrioridad().equals(proyecto.getPrioridad().getClave())) {
 			cambio.append(", cambio la prioridad");
-			Optional<Catalogo> optional = prioridad.getCatalogos().stream().filter(x->x.getClave() == rqsv043.getPrioridad()).findAny();
+			Optional<Catalogo> optional = prioridad.getCatalogos().stream().filter(x->x.getClave().equals(rqsv043.getPrioridad())).findAny();
 			if(optional.isEmpty()) {
 				return rsb035.notFound("No se encontro la prioridad a actualizar");
 			}
@@ -75,9 +81,9 @@ public class Proyecto006BZ {
 		}
 		if(!rqsv043.getRevisor().equals(proyecto.getRevisor().getClave())) {
 			cambio.append(", cambio el revisor");
-			Optional<Usuario> optional = usuarioRepository.findByClave(rqsv043.getRevisor());
+			Optional<Trabajador> optional = trabajadorRepository.findByClave(rqsv043.getRevisor());
 			if(optional.isEmpty()) {
-				return rsb035.notFound("No se encontro el usuario a actualizar");
+				return rsb035.notFound("No se encontro el revisor a actualizar");
 			}
 			proyecto.setRevisor(optional.get());
 		}
@@ -89,6 +95,10 @@ public class Proyecto006BZ {
 		proyecto.setFechaModificado(LocalDateTime.now());
 		proyectoRepository.save(proyecto);
 		
+
+        Usuario usuario = usuarioRepository.findById(sesion.getUsuario().getId())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
 		ProyectoComentario comentario = new ProyectoComentario();
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
@@ -100,6 +110,7 @@ public class Proyecto006BZ {
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setUsuario(usuario);
 		comentario.setIdProyecto(proyecto.getId());
+		comentario.setEstatus(proyecto.getEstatus());
 		proyectoComentarioRepository.save(comentario);
 		return rsb035.ok(proyecto);
 	}

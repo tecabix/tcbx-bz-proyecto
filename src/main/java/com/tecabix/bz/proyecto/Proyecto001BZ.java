@@ -46,11 +46,16 @@ public class Proyecto001BZ {
 	public ResponseEntity<RSB030> crear(final RQSV038 rqsv038) {
 		RSB030 response = rqsv038.getRsb030();
 		Proyecto proyecto = new Proyecto();
-		
-		Optional<Trabajador> trabajadorOP = trabajadorRepository.findByClave(rqsv038.getTrabajador());
-		if(trabajadorOP.isEmpty()) {
-			return response.notFound("No se encontro el trabajador");
+		Optional<Trabajador> trabajadorOP;
+		if (rqsv038.getTrabajador() == null) {
+		    trabajadorOP = trabajadorRepository.findByClaveUsuario(rqsv038.getSesion().getUsuario().getClave());
+		} else {
+		    trabajadorOP = trabajadorRepository.findByClave(rqsv038.getTrabajador());
+		    if(trabajadorOP.isEmpty()) {
+	            return response.notFound("No se encontro el trabajador");
+	        }
 		}
+
 		proyecto.setTrabajador(trabajadorOP.get());
 		
 		Optional<Catalogo> catalogoOP = catalogoRepository.findByClave(rqsv038.getPrioridad());

@@ -2,7 +2,6 @@ package com.tecabix.bz.proyecto;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.PageRequest;
@@ -31,20 +30,22 @@ public class Proyecto002BZ {
 		byte elementos = rqsv039.getElementos();
 		short pagina = rqsv039.getPagina();
 		
-	    Optional<String> texto = rqsv039.getTexto();
-	    List<UUID> etapas = rqsv039.getEtapas().orElse(null);
-	    List<UUID> estatus = rqsv039.getEstatus().orElse(null);
-	    List<UUID> prioridad = rqsv039.getPrioridad().orElse(null);
-	    LocalDate fechaMin = rqsv039.getFechaCreacionMin().orElse(null);
-	    LocalDate fechaMax = rqsv039.getFechaCreacionMax().orElse(null);
+	    String texto = rqsv039.getTexto().orElse(null);
+	    List<UUID> etapas = rqsv039.getEtapas();
+	    List<UUID> estatus = rqsv039.getEstatus();
+	    List<UUID> prioridad = rqsv039.getPrioridad();
+	    List<UUID> tipoBacklog = rqsv039.getTipoBacklog();
+	    LocalDate fechaMin = rqsv039.getFechaCreacionMin();
+	    LocalDate fechaMax = rqsv039.getFechaCreacionMax();
 	    UUID trabajador = rqsv039.getTrabajador().orElse(null);
-	    
-	    boolean presentTexto = texto.isPresent();
-
+	    if(texto == null) {
+	    	texto = new String();
+	    }
 	    Sort sort = Sort.by(Sort.Direction.ASC, "id");
 	    Pageable pageable = PageRequest.of(pagina, elementos, sort);
-	    String nombre = presentTexto && !texto.get().isBlank() ? "%"+texto.get()+"%" : null;
-	    
-	    return rsb031.ok(proyectoRepository.findByFilter(nombre, etapas, estatus, prioridad, fechaMin, fechaMax, trabajador, pageable).toList());
+	    if(rqsv039.getTrabajador().isPresent()) {
+	    	return rsb031.ok(proyectoRepository.findByFilterTrabajador(texto, etapas, estatus, prioridad, fechaMin, fechaMax, tipoBacklog, trabajador, pageable).toList());
+	    }
+	    return rsb031.ok(proyectoRepository.findByFilter(texto, etapas, estatus, prioridad, fechaMin, fechaMax, tipoBacklog, pageable).toList());
 	}
 }

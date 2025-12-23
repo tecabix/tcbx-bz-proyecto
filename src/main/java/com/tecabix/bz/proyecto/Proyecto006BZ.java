@@ -31,16 +31,14 @@ public class Proyecto006BZ {
 	private final ProyectoComentarioRepository proyectoComentarioRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final CatalogoTipo prioridad;
-	private final Usuario usuario;
 
 	public Proyecto006BZ(TrabajadorRepository trabajadorRepository, ProyectoRepository proyectoRepository,
-			ProyectoComentarioRepository proyectoComentarioRepository, UsuarioRepository usuarioRepository, CatalogoTipo prioridad, Usuario usuario) {
+			ProyectoComentarioRepository proyectoComentarioRepository, UsuarioRepository usuarioRepository, CatalogoTipo prioridad) {
 		super();
 		this.trabajadorRepository = trabajadorRepository;
 		this.proyectoRepository = proyectoRepository;
 		this.proyectoComentarioRepository = proyectoComentarioRepository;
 		this.prioridad = prioridad;
-		this.usuario = usuario;
 		this.usuarioRepository = usuarioRepository;
 	}
 
@@ -79,14 +77,23 @@ public class Proyecto006BZ {
 			}
 			proyecto.setPrioridad(optional.get());
 		}
-		if(!rqsv043.getRevisor().equals(proyecto.getRevisor().getClave())) {
-			cambio.append(", cambio el revisor");
-			Optional<Trabajador> optional = trabajadorRepository.findByClave(rqsv043.getRevisor());
-			if(optional.isEmpty()) {
-				return rsb035.notFound("No se encontro el revisor a actualizar");
-			}
-			proyecto.setRevisor(optional.get());
-		}
+		
+		
+        Optional<Trabajador> trabajadoRevisorOP;
+        if (rqsv043.getRevisor() == null) {
+            trabajadoRevisorOP = trabajadorRepository.findByClaveUsuario(sesion.getUsuario().getClave());
+            proyecto.setRevisor(trabajadoRevisorOP.get());
+        } else {
+            if(!rqsv043.getRevisor().equals(proyecto.getRevisor().getClave())) {
+                cambio.append(", cambio el revisor");
+                Optional<Trabajador> optional = trabajadorRepository.findByClave(rqsv043.getRevisor());
+                if(optional.isEmpty()) {
+                    return rsb035.notFound("No se encontro el revisor a actualizar");
+                }
+                proyecto.setRevisor(optional.get());
+            }
+        }
+	
 		if(cambio.isEmpty()) {
 			return rsb035.badRequest("No hay cambios");
 		}
@@ -107,9 +114,8 @@ public class Proyecto006BZ {
 		comentario.setFechaCreacion(LocalDateTime.now());
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setIdUsuarioModificado(sesion.getUsuario().getId());
-		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setUsuario(usuario);
-		comentario.setIdProyecto(proyecto.getId());
+		comentario.setProyecto(proyecto);
 		comentario.setEstatus(proyecto.getEstatus());
 		proyectoComentarioRepository.save(comentario);
 		return rsb035.ok(proyecto);

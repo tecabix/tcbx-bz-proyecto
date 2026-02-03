@@ -24,10 +24,11 @@ public class Proyecto009BZ {
 
 		ProyectoComentario comentario = proyectoComentarioRepository.findByClave(rqsv046.getComentario()).orElse(null);
 		if(comentario == null) {
-			return response.notFound("Ni se encontro el comentario");
+			return response.notFound("No se encontro el comentario");
 		}
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setIdUsuarioModificado(sesion.getUsuario().getId());
+		comentario.setComentario(rqsv046.getTexto());
 		proyectoComentarioRepository.save(comentario);
 		return response.ok(comentario);
 	}

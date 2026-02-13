@@ -53,6 +53,7 @@ public class Proyecto003BZ {
 			}
 		}
 		nombres.put(RSA026.RESPONSABLE, nombre);
+		nombres.put(RSA026.ID_RESPONSABLE, persona.getPersona().getClave().toString());
 		
 		Optional<Usuario> usuarioOptional = usuarioRepository.findById(proyecto.getUsuarioCreador());
 		if(usuarioOptional.isEmpty()) {
@@ -71,6 +72,7 @@ public class Proyecto003BZ {
 			}
 		}
 		nombres.put(RSA026.CREADOR, nombre);
+		nombres.put(RSA026.ID_CREADOR, persona.getPersona().getClave().toString());
 		
 		usuarioOptional = usuarioRepository.findById(proyecto.getIdUsuarioModificado());
 		if(usuarioOptional.isEmpty()) {
@@ -89,7 +91,7 @@ public class Proyecto003BZ {
 			}
 		}
 		nombres.put(RSA026.MODIFICADOR, nombre);
-		
+		nombres.put(RSA026.ID_MODIFICADOR, persona.getPersona().getClave().toString());
 		persona = proyecto.getRevisor().getPersonaFisica();
 		nombre = persona.getNombre();
 		if(persona.getApellidoPaterno() != null && persona.getApellidoMaterno() != null) {
@@ -98,6 +100,7 @@ public class Proyecto003BZ {
 			}
 		}
 		nombres.put(RSA026.REVISOR, nombre);
+		nombres.put(RSA026.ID_REVISOR, persona.getPersona().getClave().toString());
 		return respose.ok(proyecto, nombres);
 	}
 }

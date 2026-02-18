@@ -61,7 +61,7 @@ public class Proyecto005BZ {
 		
 		Optional<Catalogo> estatusOp = catalogoRepository.findByClave(rqsv042.getEtapa());
 		if(estatusOp.isEmpty()) {
-			return rsb034.notFound("No se encontro la etapa");
+			return rsb034.notFound("No se encontro el estatus");
 		}
 		Optional<Proyecto> proyectoOp = proyectoRepository.findByClave(rqsv042.getProyecto());
 		if(proyectoOp.isEmpty()) {
@@ -102,10 +102,10 @@ public class Proyecto005BZ {
 			return rsb034.badRequest("No se puede cambiar el estatus.");
 		}
 		
-		String estatusViejo = proyecto.getEtapa().getNombre();
+		String estatusViejo = proyecto.getEstatus().getNombre();
 		
 		proyecto.setEstatus(estatus);
-		String estatusNuevo = proyecto.getEtapa().getNombre();
+		String estatusNuevo = proyecto.getEstatus().getNombre();
 		proyecto.setIdUsuarioModificado(sesion.getUsuario().getId());
 		proyecto.setFechaModificado(LocalDateTime.now());
 		proyectoRepository.save(proyecto);

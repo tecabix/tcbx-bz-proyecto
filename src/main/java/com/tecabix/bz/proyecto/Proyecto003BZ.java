@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 
 import com.tecabix.db.entity.PersonaFisica;
 import com.tecabix.db.entity.Proyecto;
+import com.tecabix.db.entity.Trabajador;
 import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.PersonaFisicaRepository;
 import com.tecabix.db.repository.ProyectoRepository;
+import com.tecabix.db.repository.TrabajadorRepository;
 import com.tecabix.db.repository.UsuarioRepository;
 import com.tecabix.res.a.RSA026;
 import com.tecabix.res.b.RSB032;
@@ -25,13 +27,16 @@ public class Proyecto003BZ {
 	private final ProyectoRepository proyectoRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final PersonaFisicaRepository personaFisicaRepository;
+	private final TrabajadorRepository trabajadorRepository;
+	
 
 
 	public Proyecto003BZ(ProyectoRepository proyectoRepository, UsuarioRepository usuarioRepository,
-			PersonaFisicaRepository personaFisicaRepository) {
+			PersonaFisicaRepository personaFisicaRepository, TrabajadorRepository trabajadorRepository) {
 		this.proyectoRepository = proyectoRepository;
 		this.usuarioRepository = usuarioRepository;
 		this.personaFisicaRepository = personaFisicaRepository;
+		this.trabajadorRepository = trabajadorRepository;
 	}
 
 
@@ -44,6 +49,7 @@ public class Proyecto003BZ {
 			return respose.notFound("No se encontro el registro");
 		}
 		Proyecto proyecto = proyectoOp.get();
+		Trabajador trabajador = proyecto.getTrabajador();
 		Map<Byte, String> nombres = new HashMap<Byte, String>();
 		PersonaFisica persona = proyecto.getTrabajador().getPersonaFisica();
 		String nombre = persona.getNombre();
@@ -53,7 +59,7 @@ public class Proyecto003BZ {
 			}
 		}
 		nombres.put(RSA026.RESPONSABLE, nombre);
-		nombres.put(RSA026.ID_RESPONSABLE, persona.getPersona().getClave().toString());
+		nombres.put(RSA026.ID_RESPONSABLE, trabajador.getClave().toString());
 		
 		Optional<Usuario> usuarioOptional = usuarioRepository.findById(proyecto.getUsuarioCreador());
 		if(usuarioOptional.isEmpty()) {
@@ -100,7 +106,7 @@ public class Proyecto003BZ {
 			}
 		}
 		nombres.put(RSA026.REVISOR, nombre);
-		nombres.put(RSA026.ID_REVISOR, persona.getPersona().getClave().toString());
+		nombres.put(RSA026.ID_REVISOR, proyecto.getRevisor().getClave().toString());
 		return respose.ok(proyecto, nombres);
 	}
 }

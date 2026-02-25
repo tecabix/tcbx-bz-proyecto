@@ -50,15 +50,13 @@ public class Proyecto001BZ {
 	public ResponseEntity<RSB030> crear(final RQSV038 rqsv038) {
 		RSB030 response = rqsv038.getRsb030();
 		Proyecto proyecto = new Proyecto();
+
 		Optional<Trabajador> trabajadorOP;
-		if (rqsv038.getTrabajador() == null) {
-		    trabajadorOP = trabajadorRepository.findByClaveUsuario(rqsv038.getSesion().getUsuario().getClave());
-		} else {
-		    trabajadorOP = trabajadorRepository.findByClave(rqsv038.getTrabajador());
-		    if(trabajadorOP.isEmpty()) {
-	            return response.notFound("No se encontro el trabajador");
-	        }
-		}
+
+        trabajadorOP = trabajadorRepository.findByClave(rqsv038.getTrabajador());
+        if(trabajadorOP.isEmpty()) {
+            return response.notFound("No se encontro el trabajador");
+        }
 
 		proyecto.setTrabajador(trabajadorOP.get());
 		
@@ -70,17 +68,18 @@ public class Proyecto001BZ {
 		if(!proyecto.getPrioridad().getCatalogoTipo().equals(tipoPrioridad)) {
 			return response.notFound("La prioridad no es valida");
 		}
-		
-		Optional<Usuario> usrRevisor = usuarioRepository.findById((long) 1);
-		Optional<Trabajador> revisor= trabajadorRepository.findByClaveUsuario(usrRevisor.get().getClave());
-		if(revisor.isEmpty()) {
-			return response.notFound("No se encontro el usuario responsable");
-		}
-		Optional<Usuario> usuarioRevisor = usuarioRepository.findById((long) 1);
-		
-		Optional<Trabajador> trabajadorRevisorOpt;
 
-		trabajadorRevisorOpt = trabajadorRepository.findByClaveUsuario(usuarioRevisor.get().getClave());
+		Optional<Trabajador> revisor= trabajadorRepository.findByClave(rqsv038.getRevisor());
+		if(revisor.isEmpty()) {
+			return response.notFound("No se encontro el revisor");
+		}
+
+		Optional<Trabajador> trabajadorRevisorOpt;
+		trabajadorRevisorOpt = trabajadorRepository.findByClave(rqsv038.getRevisor());
+		
+		if(trabajadorRevisorOpt.get().equals(trabajadorOP.get())) {
+		    return response.badRequest("El revisor y responsable no pueden ser los mismos");
+		}
         
 		proyecto.setRevisor(trabajadorRevisorOpt.get());
 		proyecto.setClave(UUID.randomUUID());

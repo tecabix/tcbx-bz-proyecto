@@ -10,10 +10,12 @@ import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
 import com.tecabix.db.entity.Sesion;
+import com.tecabix.db.entity.Trabajador;
 import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.CatalogoRepository;
 import com.tecabix.db.repository.ProyectoComentarioRepository;
 import com.tecabix.db.repository.ProyectoRepository;
+import com.tecabix.db.repository.TrabajadorRepository;
 import com.tecabix.res.b.RSB034;
 import com.tecabix.sv.rq.RQSV042;
 
@@ -26,6 +28,7 @@ public class Proyecto005BZ {
 	private final CatalogoRepository catalogoRepository;
 	private final ProyectoRepository proyectoRepository;
 	private final ProyectoComentarioRepository proyectoComentarioRepository;
+	private final TrabajadorRepository trabajadorRepository;
 
 	private final Catalogo porHacer;
 	private final Catalogo enProceso;
@@ -37,14 +40,16 @@ public class Proyecto005BZ {
 	
 	private Usuario usuario;
 	
+
 	public Proyecto005BZ(CatalogoRepository catalogoRepository, ProyectoRepository proyectoRepository,
-			ProyectoComentarioRepository proyectoComentarioRepository, Catalogo porHacer, Catalogo enProceso,
-			Catalogo enRevision, Catalogo listo, Catalogo enPausa, Catalogo bloqueado, Catalogo conObservaciones,
-			Usuario usuario) {
+			ProyectoComentarioRepository proyectoComentarioRepository, TrabajadorRepository trabajadorRepository,
+			Catalogo porHacer, Catalogo enProceso, Catalogo enRevision, Catalogo listo, Catalogo enPausa,
+			Catalogo bloqueado, Catalogo conObservaciones, Usuario usuario) {
 		super();
 		this.catalogoRepository = catalogoRepository;
 		this.proyectoRepository = proyectoRepository;
 		this.proyectoComentarioRepository = proyectoComentarioRepository;
+		this.trabajadorRepository = trabajadorRepository;
 		this.porHacer = porHacer;
 		this.enProceso = enProceso;
 		this.enRevision = enRevision;
@@ -61,7 +66,7 @@ public class Proyecto005BZ {
 		
 		Optional<Catalogo> estatusOp = catalogoRepository.findByClave(rqsv042.getEtapa());
 		if(estatusOp.isEmpty()) {
-			return rsb034.notFound("No se encontro la etapa");
+			return rsb034.notFound("No se encontro el estatus");
 		}
 		Optional<Proyecto> proyectoOp = proyectoRepository.findByClave(rqsv042.getProyecto());
 		if(proyectoOp.isEmpty()) {
@@ -83,7 +88,8 @@ public class Proyecto005BZ {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(listo)) {
-			if(!proyecto.getEtapa().equals(enRevision) || !sesion.getUsuario().equals(proyecto.getRevisor())) {
+			Trabajador trabajador = trabajadorRepository.findByClaveUsuario(sesion.getUsuario().getClave()).orElse(null);
+			if(!proyecto.getEtapa().equals(enRevision) || trabajador == null || !trabajador.equals(proyecto.getRevisor())) {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(enPausa)) {
@@ -95,17 +101,18 @@ public class Proyecto005BZ {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(conObservaciones)) {
-			if(!proyecto.getEtapa().equals(enRevision) || !sesion.getUsuario().equals(proyecto.getRevisor())) {
+			Trabajador trabajador = trabajadorRepository.findByClaveUsuario(sesion.getUsuario().getClave()).orElse(null);
+			if(!proyecto.getEtapa().equals(enRevision) || trabajador == null ||!trabajador.equals(proyecto.getRevisor())) {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else {
 			return rsb034.badRequest("No se puede cambiar el estatus.");
 		}
 		
-		String estatusViejo = proyecto.getEtapa().getNombre();
+		String estatusViejo = proyecto.getEstatus().getNombre();
 		
 		proyecto.setEstatus(estatus);
-		String estatusNuevo = proyecto.getEtapa().getNombre();
+		String estatusNuevo = proyecto.getEstatus().getNombre();
 		proyecto.setIdUsuarioModificado(sesion.getUsuario().getId());
 		proyecto.setFechaModificado(LocalDateTime.now());
 		proyectoRepository.save(proyecto);

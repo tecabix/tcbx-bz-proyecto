@@ -10,11 +10,9 @@ import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.CatalogoTipo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.Trabajador;
-import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.CatalogoRepository;
 import com.tecabix.db.repository.ProyectoRepository;
 import com.tecabix.db.repository.TrabajadorRepository;
-import com.tecabix.db.repository.UsuarioRepository;
 import com.tecabix.res.b.RSB030;
 import com.tecabix.sv.rq.RQSV038;
 
@@ -31,12 +29,11 @@ public class Proyecto001BZ {
 	private final Catalogo porHacer;
 	private final Catalogo productBacklog;
 	private final CatalogoTipo tipoPrioridad;
-	private final UsuarioRepository usuarioRepository;
 	
 
 	public Proyecto001BZ(ProyectoRepository proyectoRepository, CatalogoRepository catalogoRepository,
 			TrabajadorRepository trabajadorRepository, Catalogo nuevo, Catalogo porHacer, CatalogoTipo tipoPrioridad,
-			Catalogo productBacklog, UsuarioRepository usuarioRepository) {
+			Catalogo productBacklog) {
 		this.proyectoRepository = proyectoRepository;
 		this.catalogoRepository = catalogoRepository;
 		this.trabajadorRepository = trabajadorRepository;
@@ -44,21 +41,18 @@ public class Proyecto001BZ {
 		this.porHacer = porHacer;
 		this.tipoPrioridad = tipoPrioridad;
 		this.productBacklog = productBacklog;
-		this.usuarioRepository = usuarioRepository;
 	}
 
 	public ResponseEntity<RSB030> crear(final RQSV038 rqsv038) {
 		RSB030 response = rqsv038.getRsb030();
 		Proyecto proyecto = new Proyecto();
+
 		Optional<Trabajador> trabajadorOP;
-		if (rqsv038.getTrabajador() == null) {
-		    trabajadorOP = trabajadorRepository.findByClaveUsuario(rqsv038.getSesion().getUsuario().getClave());
-		} else {
-		    trabajadorOP = trabajadorRepository.findByClave(rqsv038.getTrabajador());
-		    if(trabajadorOP.isEmpty()) {
-	            return response.notFound("No se encontro el trabajador");
-	        }
-		}
+
+        trabajadorOP = trabajadorRepository.findByClave(rqsv038.getTrabajador());
+        if(trabajadorOP.isEmpty()) {
+            return response.notFound("No se encontro el trabajador");
+        }
 
 		proyecto.setTrabajador(trabajadorOP.get());
 		
@@ -70,17 +64,18 @@ public class Proyecto001BZ {
 		if(!proyecto.getPrioridad().getCatalogoTipo().equals(tipoPrioridad)) {
 			return response.notFound("La prioridad no es valida");
 		}
-		
-		Optional<Usuario> usrRevisor = usuarioRepository.findById((long) 1);
-		Optional<Trabajador> revisor= trabajadorRepository.findByClaveUsuario(usrRevisor.get().getClave());
-		if(revisor.isEmpty()) {
-			return response.notFound("No se encontro el usuario responsable");
-		}
-		Optional<Usuario> usuarioRevisor = usuarioRepository.findById((long) 1);
-		
-		Optional<Trabajador> trabajadorRevisorOpt;
 
-		trabajadorRevisorOpt = trabajadorRepository.findByClaveUsuario(usuarioRevisor.get().getClave());
+		Optional<Trabajador> revisor= trabajadorRepository.findByClave(rqsv038.getRevisor());
+		if(revisor.isEmpty()) {
+			return response.notFound("No se encontro el revisor");
+		}
+
+		Optional<Trabajador> trabajadorRevisorOpt;
+		trabajadorRevisorOpt = trabajadorRepository.findByClave(rqsv038.getRevisor());
+		
+		if(trabajadorRevisorOpt.get().equals(trabajadorOP.get())) {
+		    return response.badRequest("El revisor y responsable no pueden ser los mismos");
+		}
         
 		proyecto.setRevisor(trabajadorRevisorOpt.get());
 		proyecto.setClave(UUID.randomUUID());

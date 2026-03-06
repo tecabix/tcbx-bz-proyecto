@@ -12,7 +12,6 @@ import com.tecabix.db.entity.Trabajador;
 import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.PersonaFisicaRepository;
 import com.tecabix.db.repository.ProyectoRepository;
-import com.tecabix.db.repository.TrabajadorRepository;
 import com.tecabix.db.repository.UsuarioRepository;
 import com.tecabix.res.a.RSA026;
 import com.tecabix.res.b.RSB032;
@@ -27,16 +26,13 @@ public class Proyecto003BZ {
 	private final ProyectoRepository proyectoRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final PersonaFisicaRepository personaFisicaRepository;
-	private final TrabajadorRepository trabajadorRepository;
-	
 
 
 	public Proyecto003BZ(ProyectoRepository proyectoRepository, UsuarioRepository usuarioRepository,
-			PersonaFisicaRepository personaFisicaRepository, TrabajadorRepository trabajadorRepository) {
+			PersonaFisicaRepository personaFisicaRepository) {
 		this.proyectoRepository = proyectoRepository;
 		this.usuarioRepository = usuarioRepository;
 		this.personaFisicaRepository = personaFisicaRepository;
-		this.trabajadorRepository = trabajadorRepository;
 	}
 
 

@@ -77,26 +77,34 @@ public class Proyecto006BZ {
 			}
 			proyecto.setPrioridad(optional.get());
 		}
-		
-		
-        Optional<Trabajador> trabajadoRevisorOP;
-        if (rqsv043.getRevisor() == null) {
-            trabajadoRevisorOP = trabajadorRepository.findByClaveUsuario(sesion.getUsuario().getClave());
-            proyecto.setRevisor(trabajadoRevisorOP.get());
-        } else {
-            if(!rqsv043.getRevisor().equals(proyecto.getRevisor().getClave())) {
-                cambio.append(", cambio el revisor");
-                Optional<Trabajador> optional = trabajadorRepository.findByClave(rqsv043.getRevisor());
-                if(optional.isEmpty()) {
-                    return rsb035.notFound("No se encontro el revisor a actualizar");
-                }
-                proyecto.setRevisor(optional.get());
+
+        if(!rqsv043.getRevisor().equals(proyecto.getRevisor().getClave())) {
+            cambio.append(", cambio el revisor");
+            Optional<Trabajador> optional = trabajadorRepository.findByClave(rqsv043.getRevisor());
+            if(optional.isEmpty()) {
+                return rsb035.notFound("No se encontro el revisor a actualizar");
             }
+            proyecto.setRevisor(optional.get());
         }
-	
+        
+        if(!rqsv043.getTrabajador().equals(proyecto.getTrabajador().getClave())) {
+            cambio.append(", cambio el responsable");
+            Optional<Trabajador> optionalResponsable = trabajadorRepository.findByClave(rqsv043.getTrabajador());
+            if(optionalResponsable.isEmpty()) {
+                return rsb035.notFound("No se encontro el responsable a actualizar");
+            }
+            proyecto.setTrabajador(optionalResponsable.get());
+        }
+        
+        if(proyecto.getTrabajador().equals(proyecto.getRevisor())) {
+            return rsb035.badRequest("El revisor y responsable no pueden ser los mismos");
+        }
+
 		if(cambio.isEmpty()) {
 			return rsb035.badRequest("No hay cambios");
 		}
+		
+		
 		builder.append(cambio);
 		proyecto.setIdUsuarioModificado(sesion.getUsuario().getId());
 		proyecto.setFechaModificado(LocalDateTime.now());

@@ -80,7 +80,7 @@ public class Proyecto005BZ {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(enProceso)) {
-			if(!proyecto.getEstatus().equals(porHacer) && !proyecto.getEtapa().equals(conObservaciones) && !proyecto.getEtapa().equals(enPausa) && !proyecto.getEtapa().equals(bloqueado)) {
+			if(!proyecto.getEstatus().equals(porHacer) && !proyecto.getEstatus().equals(conObservaciones) && !proyecto.getEstatus().equals(enPausa) && !proyecto.getEstatus().equals(bloqueado)) {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(enRevision)) {
@@ -89,7 +89,7 @@ public class Proyecto005BZ {
 			}
 		} else if(estatus.equals(listo)) {
 			Trabajador trabajador = trabajadorRepository.findByClaveUsuario(sesion.getUsuario().getClave()).orElse(null);
-			if(!proyecto.getEtapa().equals(enRevision) || trabajador == null || !trabajador.equals(proyecto.getRevisor())) {
+			if(!proyecto.getEstatus().equals(enRevision) || trabajador == null || !trabajador.equals(proyecto.getRevisor())) {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else if(estatus.equals(enPausa)) {
@@ -102,7 +102,7 @@ public class Proyecto005BZ {
 			}
 		} else if(estatus.equals(conObservaciones)) {
 			Trabajador trabajador = trabajadorRepository.findByClaveUsuario(sesion.getUsuario().getClave()).orElse(null);
-			if(!proyecto.getEtapa().equals(enRevision) || trabajador == null ||!trabajador.equals(proyecto.getRevisor())) {
+			if(!proyecto.getEstatus().equals(enRevision) || trabajador == null ||!trabajador.equals(proyecto.getRevisor())) {
 				return rsb034.badRequest("No se puede cambiar el estatus.");
 			}
 		} else {

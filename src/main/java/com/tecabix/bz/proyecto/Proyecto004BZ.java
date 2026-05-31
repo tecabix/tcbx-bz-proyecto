@@ -83,56 +83,56 @@ public class Proyecto004BZ {
 		
 		if(etapa.equals(nuevo)) {
 			if(!proyecto.getEtapa().equals(analisis)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb032.badRequest("No se puede cambiar la etapa.");
 			}
 		} else if(etapa.equals(analisis)) {
 			if(!proyecto.getEtapa().equals(nuevo) && !proyecto.getEtapa().equals(desarrollo)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb032.badRequest("No se puede cambiar la etapa.");
 			}
 			if(proyecto.getEtapa().equals(nuevo) && !proyecto.getEstatus().equals(porHacer)) {
-				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
+				return rsb032.badRequest("No se puede cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(desarrollo)) {
 			if(!proyecto.getEtapa().equals(analisis) && !proyecto.getEtapa().equals(construccion) && !proyecto.getEtapa().equals(prueba) && !proyecto.getEtapa().equals(calidad)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb032.badRequest("No se puede cambiar la etapa.");
 			}
 			if(proyecto.getEtapa().equals(analisis) && !proyecto.getEstatus().equals(listo)) {
-				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
+				return rsb032.badRequest("No se puede cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(construccion)) {
 			if(!proyecto.getEtapa().equals(desarrollo) && !proyecto.getEtapa().equals(prueba)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb032.badRequest("No se puede cambiar la etapa.");
 			}
 			if(proyecto.getEtapa().equals(desarrollo) && !proyecto.getEstatus().equals(listo)) {
-				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
+				return rsb032.badRequest("No se puede cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(prueba)) {
 			if(!proyecto.getEtapa().equals(construccion) && !proyecto.getEtapa().equals(calidad)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb032.badRequest("No se puede cambiar la etapa.");
 			}
 			if(proyecto.getEtapa().equals(construccion) && !proyecto.getEstatus().equals(listo)) {
-				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
+				return rsb032.badRequest("No se puede cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(calidad)) {
 			if(!proyecto.getEtapa().equals(prueba) && !proyecto.getEtapa().equals(produccion)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb032.badRequest("No se puede cambiar la etapa.");
 			}
 			if(proyecto.getEtapa().equals(prueba) && !proyecto.getEstatus().equals(listo)) {
-				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
+				return rsb032.badRequest("No se puede cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(produccion)) {
 			if(!proyecto.getEtapa().equals(calidad) && !proyecto.getEtapa().equals(liberado)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb032.badRequest("No se puede cambiar la etapa.");
 			}
 			if(proyecto.getEtapa().equals(calidad) && !proyecto.getEstatus().equals(listo)) {
-				return rsb032.badRequest("No se pude cambiar la etapa si el proyecto no esta en listo.");
+				return rsb032.badRequest("No se puede cambiar la etapa si el proyecto no esta en listo.");
 			}
 		} else if(etapa.equals(liberado)) {
 			if(!proyecto.getEtapa().equals(produccion) || !proyecto.getEstatus().equals(listo)) {
-				return rsb032.badRequest("No se pude cambiar la etapa.");
+				return rsb032.badRequest("No se puede cambiar la etapa.");
 			}
 		} else if(!etapa.equals(descartado)) {
-			return rsb032.badRequest("No se pude cambiar la etapa.");
+			return rsb032.badRequest("No se puede cambiar la etapa.");
 		}
 		if(!etapa.equals(descartado)) {
 			proyecto.setEstatus(porHacer);

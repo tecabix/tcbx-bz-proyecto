@@ -10,10 +10,11 @@ import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
 import com.tecabix.db.entity.Sesion;
-import com.tecabix.db.entity.Usuario;
+import com.tecabix.db.entity.Trabajador;
 import com.tecabix.db.repository.CatalogoRepository;
 import com.tecabix.db.repository.ProyectoComentarioRepository;
 import com.tecabix.db.repository.ProyectoRepository;
+import com.tecabix.db.repository.TrabajadorRepository;
 import com.tecabix.res.b.RSB033;
 import com.tecabix.sv.rq.RQSV041;
 
@@ -26,6 +27,7 @@ public class Proyecto004BZ {
 	private final CatalogoRepository catalogoRepository;
 	private final ProyectoRepository proyectoRepository;
 	private final ProyectoComentarioRepository proyectoComentarioRepository;
+	private final TrabajadorRepository trabajadorRepository;
 
 	private final Catalogo nuevo;
 	private final Catalogo analisis;
@@ -40,14 +42,11 @@ public class Proyecto004BZ {
 	private final Catalogo porHacer;
 	private final Catalogo listo;
 	
-	private final Usuario usuario;
-	
-	
 
 	public Proyecto004BZ(CatalogoRepository catalogoRepository, ProyectoRepository proyectoRepository,
-			ProyectoComentarioRepository proyectoComentarioRepository, Catalogo nuevo, Catalogo analisis,
+			ProyectoComentarioRepository proyectoComentarioRepository,TrabajadorRepository trabajadorRepository, Catalogo nuevo, Catalogo analisis,
 			Catalogo desarrollo, Catalogo construccion, Catalogo prueba, Catalogo calidad, Catalogo produccion,
-			Catalogo liberado, Catalogo descartado, Catalogo porHacer, Catalogo listo, Usuario usuario) {
+			Catalogo liberado, Catalogo descartado, Catalogo porHacer, Catalogo listo) {
 		this.catalogoRepository = catalogoRepository;
 		this.proyectoRepository = proyectoRepository;
 		this.proyectoComentarioRepository = proyectoComentarioRepository;
@@ -62,7 +61,7 @@ public class Proyecto004BZ {
 		this.descartado = descartado;
 		this.porHacer = porHacer;
 		this.listo = listo;
-		this.usuario = usuario;
+		this.trabajadorRepository = trabajadorRepository;
 	}
 
 
@@ -137,6 +136,11 @@ public class Proyecto004BZ {
 		if(!etapa.equals(descartado)) {
 			proyecto.setEstatus(porHacer);
 		}
+		Trabajador trabajador = trabajadorRepository.findByClaveUsuario(sesion.getUsuario().getClave()).orElse(null);
+		if(trabajador == null) {
+			return rsb032.notFound("No se encontro el trabjador.");
+		}
+		
 		String etapaVieja = proyecto.getEtapa().getNombre();
 		
 		proyecto.setEtapa(etapa);
@@ -148,12 +152,12 @@ public class Proyecto004BZ {
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setClave(UUID.randomUUID());
-		comentario.setComentario("El usuario ["+sesion.getUsuario().getNombre()+"|"+sesion.getUsuario().getClave()+"] cambio la etapa de "+etapaVieja+" a "+etapaNueva+".");
+		comentario.setComentario("Se cambio la etapa de "+etapaVieja+" a "+etapaNueva+".");
 		comentario.setFechaCreacion(LocalDateTime.now());
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setIdUsuarioModificado(sesion.getUsuario().getId());
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
-		comentario.setUsuario(usuario);
+		comentario.setTrabajador(trabajador);
 		comentario.setProyecto(proyecto);
 		comentario.setEstatus(proyecto.getEstatus());
 		proyectoComentarioRepository.save(comentario);

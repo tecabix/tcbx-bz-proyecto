@@ -11,7 +11,6 @@ import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
 import com.tecabix.db.entity.Sesion;
 import com.tecabix.db.entity.Trabajador;
-import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.CatalogoRepository;
 import com.tecabix.db.repository.ProyectoComentarioRepository;
 import com.tecabix.db.repository.ProyectoRepository;
@@ -38,13 +37,11 @@ public class Proyecto005BZ {
 	private final Catalogo bloqueado;
 	private final Catalogo conObservaciones;
 	
-	private Usuario usuario;
-	
 
 	public Proyecto005BZ(CatalogoRepository catalogoRepository, ProyectoRepository proyectoRepository,
 			ProyectoComentarioRepository proyectoComentarioRepository, TrabajadorRepository trabajadorRepository,
 			Catalogo porHacer, Catalogo enProceso, Catalogo enRevision, Catalogo listo, Catalogo enPausa,
-			Catalogo bloqueado, Catalogo conObservaciones, Usuario usuario) {
+			Catalogo bloqueado, Catalogo conObservaciones) {
 		super();
 		this.catalogoRepository = catalogoRepository;
 		this.proyectoRepository = proyectoRepository;
@@ -57,7 +54,6 @@ public class Proyecto005BZ {
 		this.enPausa = enPausa;
 		this.bloqueado = bloqueado;
 		this.conObservaciones = conObservaciones;
-		this.usuario = usuario;
 	}
 
 	public ResponseEntity<RSB034> actualizarEstatus(final RQSV042 rqsv042) {
@@ -108,7 +104,11 @@ public class Proyecto005BZ {
 		} else {
 			return rsb034.badRequest("No se puede cambiar el estatus.");
 		}
-		
+
+		Trabajador trabajador = trabajadorRepository.findByClaveUsuario(sesion.getUsuario().getClave()).orElse(null);
+		if(trabajador == null) {
+			return rsb034.notFound("No se encontro el trabjador.");
+		}
 		String estatusViejo = proyecto.getEstatus().getNombre();
 		
 		proyecto.setEstatus(estatus);
@@ -120,12 +120,12 @@ public class Proyecto005BZ {
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setClave(UUID.randomUUID());
-		comentario.setComentario("El usuario ["+sesion.getUsuario().getNombre()+"|"+sesion.getUsuario().getClave()+"] cambio el estatus de "+estatusViejo+" a "+estatusNuevo+".");
+		comentario.setComentario("Se cambio el estatus de "+estatusViejo+" a "+estatusNuevo+".");
 		comentario.setFechaCreacion(LocalDateTime.now());
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setIdUsuarioModificado(sesion.getUsuario().getId());
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
-		comentario.setUsuario(usuario);
+		comentario.setTrabajador(trabajador);
 		comentario.setProyecto(proyecto);
 		comentario.setEstatus(proyecto.getEstatus());
 		proyectoComentarioRepository.save(comentario);

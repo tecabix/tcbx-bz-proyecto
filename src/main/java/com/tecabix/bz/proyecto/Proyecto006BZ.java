@@ -28,14 +28,16 @@ public class Proyecto006BZ {
 	private final ProyectoRepository proyectoRepository;
 	private final ProyectoComentarioRepository proyectoComentarioRepository;
 	private final CatalogoTipo prioridad;
+	private final Catalogo activo;
 
 	public Proyecto006BZ(TrabajadorRepository trabajadorRepository, ProyectoRepository proyectoRepository,
-			ProyectoComentarioRepository proyectoComentarioRepository, CatalogoTipo prioridad) {
+			ProyectoComentarioRepository proyectoComentarioRepository, CatalogoTipo prioridad, Catalogo activo) {
 		super();
 		this.trabajadorRepository = trabajadorRepository;
 		this.proyectoRepository = proyectoRepository;
 		this.proyectoComentarioRepository = proyectoComentarioRepository;
 		this.prioridad = prioridad;
+	    this.activo = activo;
 	}
 
 
@@ -146,7 +148,7 @@ public class Proyecto006BZ {
 		comentario.setIdUsuarioModificado(sesion.getUsuario().getId());
 		comentario.setTrabajador(trabajador);
 		comentario.setProyecto(proyecto);
-		comentario.setEstatus(proyecto.getEstatus());
+		comentario.setEstatus(activo);
 		proyectoComentarioRepository.save(comentario);
 		return rsb035.ok(proyecto);
 	}

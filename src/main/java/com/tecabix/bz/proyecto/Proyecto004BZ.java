@@ -41,12 +41,13 @@ public class Proyecto004BZ {
 	
 	private final Catalogo porHacer;
 	private final Catalogo listo;
+	private final Catalogo activo;
 	
 
 	public Proyecto004BZ(CatalogoRepository catalogoRepository, ProyectoRepository proyectoRepository,
 			ProyectoComentarioRepository proyectoComentarioRepository,TrabajadorRepository trabajadorRepository, Catalogo nuevo, Catalogo analisis,
 			Catalogo desarrollo, Catalogo construccion, Catalogo prueba, Catalogo calidad, Catalogo produccion,
-			Catalogo liberado, Catalogo descartado, Catalogo porHacer, Catalogo listo) {
+			Catalogo liberado, Catalogo descartado, Catalogo porHacer, Catalogo listo, Catalogo activo) {
 		this.catalogoRepository = catalogoRepository;
 		this.proyectoRepository = proyectoRepository;
 		this.proyectoComentarioRepository = proyectoComentarioRepository;
@@ -62,6 +63,7 @@ public class Proyecto004BZ {
 		this.porHacer = porHacer;
 		this.listo = listo;
 		this.trabajadorRepository = trabajadorRepository;
+	    this.activo = activo;
 	}
 
 
@@ -159,7 +161,7 @@ public class Proyecto004BZ {
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setTrabajador(trabajador);
 		comentario.setProyecto(proyecto);
-		comentario.setEstatus(proyecto.getEstatus());
+		comentario.setEstatus(activo);
 		proyectoComentarioRepository.save(comentario);
 		return rsb032.ok(proyecto);
 	}

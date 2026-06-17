@@ -36,12 +36,13 @@ public class Proyecto005BZ {
 	private final Catalogo enPausa;
 	private final Catalogo bloqueado;
 	private final Catalogo conObservaciones;
+	private final Catalogo activo;
 	
 
 	public Proyecto005BZ(CatalogoRepository catalogoRepository, ProyectoRepository proyectoRepository,
 			ProyectoComentarioRepository proyectoComentarioRepository, TrabajadorRepository trabajadorRepository,
 			Catalogo porHacer, Catalogo enProceso, Catalogo enRevision, Catalogo listo, Catalogo enPausa,
-			Catalogo bloqueado, Catalogo conObservaciones) {
+			Catalogo bloqueado, Catalogo conObservaciones, Catalogo activo) {
 		super();
 		this.catalogoRepository = catalogoRepository;
 		this.proyectoRepository = proyectoRepository;
@@ -54,6 +55,7 @@ public class Proyecto005BZ {
 		this.enPausa = enPausa;
 		this.bloqueado = bloqueado;
 		this.conObservaciones = conObservaciones;
+	    this.activo = activo;
 	}
 
 	public ResponseEntity<RSB034> actualizarEstatus(final RQSV042 rqsv042) {
@@ -127,7 +129,7 @@ public class Proyecto005BZ {
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setTrabajador(trabajador);
 		comentario.setProyecto(proyecto);
-		comentario.setEstatus(proyecto.getEstatus());
+		comentario.setEstatus(activo);
 		proyectoComentarioRepository.save(comentario);
 		return rsb034.ok(proyecto);
 	}

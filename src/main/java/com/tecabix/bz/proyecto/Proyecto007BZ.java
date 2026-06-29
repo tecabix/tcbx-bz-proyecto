@@ -10,8 +10,10 @@ import com.tecabix.db.entity.Catalogo;
 import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
 import com.tecabix.db.entity.Sesion;
+import com.tecabix.db.entity.Trabajador;
 import com.tecabix.db.repository.ProyectoComentarioRepository;
 import com.tecabix.db.repository.ProyectoRepository;
+import com.tecabix.db.repository.TrabajadorRepository;
 import com.tecabix.res.b.RSB038;
 import com.tecabix.sv.rq.RQSV044;
 
@@ -19,14 +21,17 @@ public class Proyecto007BZ {
 
 	private final ProyectoComentarioRepository proyectoComentarioRepository;
 	private final ProyectoRepository proyectoRepository;
+	private final TrabajadorRepository trabajadorRepository;
 	private final Catalogo activo;
+	
 
 	public Proyecto007BZ(ProyectoComentarioRepository proyectoComentarioRepository,
-			ProyectoRepository proyectoRepository, Catalogo activo) {
+			ProyectoRepository proyectoRepository, Catalogo activo, TrabajadorRepository trabajadorRepository) {
 		super();
 		this.proyectoComentarioRepository = proyectoComentarioRepository;
 		this.proyectoRepository = proyectoRepository;
 		this.activo = activo;
+		this.trabajadorRepository = trabajadorRepository;
 	}
 
 	public ResponseEntity<RSB038> crearComentario(RQSV044 rqsv043) {
@@ -39,7 +44,12 @@ public class Proyecto007BZ {
 		if(comentario.getProyecto() == null) {
 			return response.notFound("NO SE ENCONTRO EL PROYECTO");
 		}
-		comentario.setUsuario(sesion.getUsuario());
+
+		Trabajador trabajador = trabajadorRepository.findByClaveUsuario(sesion.getUsuario().getClave()).orElse(null);
+		if(trabajador == null) {
+			return response.notFound("No se encontro el trabjador.");
+		}
+		comentario.setTrabajador(trabajador);
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setClave(UUID.randomUUID());
 		comentario.setEstatus(activo);

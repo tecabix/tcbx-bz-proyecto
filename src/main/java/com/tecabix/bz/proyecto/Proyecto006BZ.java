@@ -85,11 +85,22 @@ public class Proyecto006BZ {
 
             Catalogo prioridadAnterior = proyecto.getPrioridad();
             Catalogo prioridadNueva = optional.get();
+            
+            String prioridadAntes = prioridadAnterior.getNombre()
+                    .toLowerCase()
+                    .replace("_", " ");
+            prioridadAntes = Character.toUpperCase(prioridadAntes.charAt(0))
+                        + prioridadAntes.substring(1);
+            String prioridadActual = prioridadNueva.getNombre()
+                    .toLowerCase()
+                    .replace("_", " ");
+            prioridadActual = Character.toUpperCase(prioridadActual.charAt(0))
+                        + prioridadActual.substring(1);
 
             comentarioCambio.append("Se cambió la prioridad de ")
-                    .append("**"+prioridadAnterior.getNombre()+"**")
+                    .append("**"+prioridadAntes+"**")
                     .append(" a ")
-                    .append("**"+prioridadNueva.getNombre()+"**")
+                    .append("**"+prioridadActual+"**")
                     .append(".\n\n");
 
             proyecto.setPrioridad(prioridadNueva);

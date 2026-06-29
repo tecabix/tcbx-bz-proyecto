@@ -12,11 +12,9 @@ import com.tecabix.db.entity.Proyecto;
 import com.tecabix.db.entity.ProyectoComentario;
 import com.tecabix.db.entity.Sesion;
 import com.tecabix.db.entity.Trabajador;
-import com.tecabix.db.entity.Usuario;
 import com.tecabix.db.repository.ProyectoComentarioRepository;
 import com.tecabix.db.repository.ProyectoRepository;
 import com.tecabix.db.repository.TrabajadorRepository;
-import com.tecabix.db.repository.UsuarioRepository;
 import com.tecabix.res.b.RSB035;
 import com.tecabix.sv.rq.RQSV043;
 
@@ -29,17 +27,17 @@ public class Proyecto006BZ {
 	private final TrabajadorRepository trabajadorRepository;
 	private final ProyectoRepository proyectoRepository;
 	private final ProyectoComentarioRepository proyectoComentarioRepository;
-	private final UsuarioRepository usuarioRepository;
 	private final CatalogoTipo prioridad;
+	private final Catalogo activo;
 
 	public Proyecto006BZ(TrabajadorRepository trabajadorRepository, ProyectoRepository proyectoRepository,
-			ProyectoComentarioRepository proyectoComentarioRepository, UsuarioRepository usuarioRepository, CatalogoTipo prioridad) {
+			ProyectoComentarioRepository proyectoComentarioRepository, CatalogoTipo prioridad, Catalogo activo) {
 		super();
 		this.trabajadorRepository = trabajadorRepository;
 		this.proyectoRepository = proyectoRepository;
 		this.proyectoComentarioRepository = proyectoComentarioRepository;
 		this.prioridad = prioridad;
-		this.usuarioRepository = usuarioRepository;
+	    this.activo = activo;
 	}
 
 
@@ -51,80 +49,140 @@ public class Proyecto006BZ {
 			return rsb035.notFound("No se encontro el proyecto");
 		}
 		Proyecto proyecto = proyectoOp.get();
-		StringBuilder builder = new StringBuilder("El usuario ["+sesion.getUsuario().getNombre()+"|"+sesion.getUsuario().getClave()+"]");
-		StringBuilder cambio = new StringBuilder();
-		if(!rqsv043.getDescripcion().equals(proyecto.getDescripcion())) {
-			cambio.append(", cambio la descripcion");
-			proyecto.setDescripcion(rqsv043.getDescripcion());
-		}
-		if(!rqsv043.getInicio().equals(proyecto.getInicio())) {
-			cambio.append(", cambio la fecha de inicio");
-			proyecto.setInicio(rqsv043.getInicio());
-		}
-		if(!rqsv043.getFin().equals(proyecto.getFin())) {
-			cambio.append(", cambio la fecha de fin");
-			proyecto.setFin(rqsv043.getFin());
-		}
-		if(!rqsv043.getNombre().equals(proyecto.getNombre())) {
-			cambio.append(", cambio el nombre");
-			proyecto.setNombre(rqsv043.getNombre());
-		}
-		if(!rqsv043.getPrioridad().equals(proyecto.getPrioridad().getClave())) {
-			cambio.append(", cambio la prioridad");
-			Optional<Catalogo> optional = prioridad.getCatalogos().stream().filter(x->x.getClave().equals(rqsv043.getPrioridad())).findAny();
-			if(optional.isEmpty()) {
-				return rsb035.notFound("No se encontro la prioridad a actualizar");
-			}
-			proyecto.setPrioridad(optional.get());
-		}
+		
+		
+		StringBuilder comentarioCambio = new StringBuilder();
+		
+		if (rqsv043.getNombre() != null && !rqsv043.getNombre().equals(proyecto.getNombre())) {
+            comentarioCambio.append("Se cambió el nombre de ")
+                    .append(proyecto.getNombre())
+                    .append(" a ")
+                    .append(proyecto.getNombre())
+                    .append(". <br/>");
 
-        if(!rqsv043.getRevisor().equals(proyecto.getRevisor().getClave())) {
-            cambio.append(", cambio el revisor");
-            Optional<Trabajador> optional = trabajadorRepository.findByClave(rqsv043.getRevisor());
-            if(optional.isEmpty()) {
-                return rsb035.notFound("No se encontro el revisor a actualizar");
-            }
-            proyecto.setRevisor(optional.get());
+            proyecto.setNombre(rqsv043.getNombre());
         }
-        
-        if(!rqsv043.getTrabajador().equals(proyecto.getTrabajador().getClave())) {
-            cambio.append(", cambio el responsable");
+		
+		if (rqsv043.getDescripcion() != null && !rqsv043.getDescripcion().equals(proyecto.getDescripcion())) {
+            comentarioCambio.append("Se cambió la descripción de ")
+                    .append(proyecto.getDescripcion())
+                    .append(" a ")
+                    .append(rqsv043.getDescripcion())
+                    .append(". <br/>");
+
+            proyecto.setDescripcion(rqsv043.getDescripcion());
+        }
+		
+		if (rqsv043.getPrioridad() != null && !rqsv043.getPrioridad().equals(proyecto.getPrioridad().getClave())) {
+
+            Optional<Catalogo> optional = prioridad.getCatalogos().stream()
+                    .filter(x -> x.getClave().equals(rqsv043.getPrioridad()))
+                    .findAny();
+
+            if (optional.isEmpty()) {
+                return rsb035.notFound("No se encontro la prioridad a actualizar");
+            }
+
+            Catalogo prioridadAnterior = proyecto.getPrioridad();
+            Catalogo prioridadNueva = optional.get();
+
+            comentarioCambio.append("Se cambió la prioridad de ")
+                    .append(prioridadAnterior.getNombre())
+                    .append(" a ")
+                    .append(prioridadNueva.getNombre())
+                    .append(". <br/>");
+
+            proyecto.setPrioridad(prioridadNueva);
+        }
+		
+		if (rqsv043.getTrabajador() != null && !rqsv043.getTrabajador().equals(proyecto.getTrabajador().getClave())) {
+
             Optional<Trabajador> optionalResponsable = trabajadorRepository.findByClave(rqsv043.getTrabajador());
-            if(optionalResponsable.isEmpty()) {
+
+            if (optionalResponsable.isEmpty()) {
                 return rsb035.notFound("No se encontro el responsable a actualizar");
             }
-            proyecto.setTrabajador(optionalResponsable.get());
+
+            Trabajador responsableAnterior = proyecto.getTrabajador();
+            Trabajador responsableNuevo = optionalResponsable.get();
+
+            comentarioCambio.append("Se cambió el responsable de ")
+                    .append(responsableAnterior.getPersonaFisica().getNombre())
+                    .append(" a ")
+                    .append(responsableNuevo.getPersonaFisica().getNombre())
+                    .append(". <br/>");
+
+            proyecto.setTrabajador(responsableNuevo);
+        }
+
+        if (rqsv043.getRevisor() != null && !rqsv043.getRevisor().equals(proyecto.getRevisor().getClave())) {
+
+            Optional<Trabajador> optionalRevisor = trabajadorRepository.findByClave(rqsv043.getRevisor());
+
+            if (optionalRevisor.isEmpty()) {
+                return rsb035.notFound("No se encontro el revisor a actualizar");
+            }
+
+            Trabajador revisorAnterior = proyecto.getRevisor();
+            Trabajador revisorNuevo = optionalRevisor.get();
+
+            comentarioCambio.append("Se cambió el responsable de ")
+                    .append(revisorAnterior.getPersonaFisica().getNombre())
+                    .append(" a ")
+                    .append(revisorNuevo.getPersonaFisica().getNombre())
+                    .append(". <br/>");
+
+            proyecto.setRevisor(revisorNuevo);
+        }
+		
+		if (!rqsv043.getInicio().equals(proyecto.getInicio())) {
+            comentarioCambio.append("Se cambió la fecha inicio de ")
+                    .append(proyecto.getInicio())
+                    .append(" a ")
+                    .append(rqsv043.getInicio())
+                    .append(". <br/>");
+
+            proyecto.setInicio(rqsv043.getInicio());
+        }
+
+        if (!rqsv043.getFin().equals(proyecto.getFin())) {
+            comentarioCambio.append("Se cambió la fecha fin de ")
+                    .append(proyecto.getFin())
+                    .append(" a ")
+                    .append(rqsv043.getFin())
+                    .append(". <br/>");
+
+            proyecto.setFin(rqsv043.getFin());
         }
         
         if(proyecto.getTrabajador().equals(proyecto.getRevisor())) {
             return rsb035.badRequest("El revisor y responsable no pueden ser los mismos");
         }
+        if (comentarioCambio.isEmpty()) {
+            return rsb035.badRequest("No hay cambios");
+        }
 
-		if(cambio.isEmpty()) {
-			return rsb035.badRequest("No hay cambios");
+
+		Trabajador trabajador = trabajadorRepository.findByClaveUsuario(sesion.getUsuario().getClave()).orElse(null);
+		if(trabajador == null) {
+			return rsb035.notFound("No se encontro el trabjador.");
 		}
-		
-		
-		builder.append(cambio);
+
 		proyecto.setIdUsuarioModificado(sesion.getUsuario().getId());
 		proyecto.setFechaModificado(LocalDateTime.now());
 		proyectoRepository.save(proyecto);
-		
-
-        Usuario usuario = usuarioRepository.findById(sesion.getUsuario().getId())
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
 		ProyectoComentario comentario = new ProyectoComentario();
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setClave(UUID.randomUUID());
-		comentario.setComentario(builder.toString());
+		comentario.setComentario(comentarioCambio.toString().trim());
 		comentario.setFechaCreacion(LocalDateTime.now());
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setIdUsuarioModificado(sesion.getUsuario().getId());
-		comentario.setUsuario(usuario);
+		comentario.setTrabajador(trabajador);
 		comentario.setProyecto(proyecto);
-		comentario.setEstatus(proyecto.getEstatus());
+		comentario.setEstatus(activo);
 		proyectoComentarioRepository.save(comentario);
 		return rsb035.ok(proyecto);
 	}

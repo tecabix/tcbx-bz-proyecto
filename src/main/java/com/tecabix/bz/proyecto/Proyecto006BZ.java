@@ -55,20 +55,20 @@ public class Proyecto006BZ {
 		
 		if (rqsv043.getNombre() != null && !rqsv043.getNombre().equals(proyecto.getNombre())) {
             comentarioCambio.append("Se cambió el nombre de ")
-                    .append(proyecto.getNombre())
+                    .append("**"+proyecto.getNombre()+"**")
                     .append(" a ")
-                    .append(proyecto.getNombre())
-                    .append(". <br/>");
+                    .append("**"+rqsv043.getNombre()+"**")
+                    .append(".\n\n");
 
             proyecto.setNombre(rqsv043.getNombre());
         }
 		
 		if (rqsv043.getDescripcion() != null && !rqsv043.getDescripcion().equals(proyecto.getDescripcion())) {
             comentarioCambio.append("Se cambió la descripción de ")
-                    .append(proyecto.getDescripcion())
+                    .append("**"+proyecto.getDescripcion()+"**")
                     .append(" a ")
-                    .append(rqsv043.getDescripcion())
-                    .append(". <br/>");
+                    .append("**"+rqsv043.getDescripcion()+"**")
+                    .append(".\n\n");
 
             proyecto.setDescripcion(rqsv043.getDescripcion());
         }
@@ -87,10 +87,10 @@ public class Proyecto006BZ {
             Catalogo prioridadNueva = optional.get();
 
             comentarioCambio.append("Se cambió la prioridad de ")
-                    .append(prioridadAnterior.getNombre())
+                    .append("**"+prioridadAnterior.getNombre()+"**")
                     .append(" a ")
-                    .append(prioridadNueva.getNombre())
-                    .append(". <br/>");
+                    .append("**"+prioridadNueva.getNombre()+"**")
+                    .append(".\n\n");
 
             proyecto.setPrioridad(prioridadNueva);
         }
@@ -107,10 +107,10 @@ public class Proyecto006BZ {
             Trabajador responsableNuevo = optionalResponsable.get();
 
             comentarioCambio.append("Se cambió el responsable de ")
-                    .append(responsableAnterior.getPersonaFisica().getNombre())
+                    .append("**"+responsableAnterior.getPersonaFisica().getNombre()+"**")
                     .append(" a ")
-                    .append(responsableNuevo.getPersonaFisica().getNombre())
-                    .append(". <br/>");
+                    .append("**"+responsableNuevo.getPersonaFisica().getNombre()+"**")
+                    .append(".\n\n");
 
             proyecto.setTrabajador(responsableNuevo);
         }
@@ -127,30 +127,30 @@ public class Proyecto006BZ {
             Trabajador revisorNuevo = optionalRevisor.get();
 
             comentarioCambio.append("Se cambió el responsable de ")
-                    .append(revisorAnterior.getPersonaFisica().getNombre())
+                    .append("**"+revisorAnterior.getPersonaFisica().getNombre()+"**")
                     .append(" a ")
-                    .append(revisorNuevo.getPersonaFisica().getNombre())
-                    .append(". <br/>");
+                    .append("**"+revisorNuevo.getPersonaFisica().getNombre()+"**")
+                    .append(".\n\n");
 
             proyecto.setRevisor(revisorNuevo);
         }
 		
 		if (!rqsv043.getInicio().equals(proyecto.getInicio())) {
             comentarioCambio.append("Se cambió la fecha inicio de ")
-                    .append(proyecto.getInicio())
+                    .append("**"+proyecto.getInicio()+"**")
                     .append(" a ")
-                    .append(rqsv043.getInicio())
-                    .append(". <br/>");
+                    .append("**"+rqsv043.getInicio()+"**")
+                    .append(".\n\n");
 
             proyecto.setInicio(rqsv043.getInicio());
         }
 
         if (!rqsv043.getFin().equals(proyecto.getFin())) {
             comentarioCambio.append("Se cambió la fecha fin de ")
-                    .append(proyecto.getFin())
+                    .append("**"+proyecto.getFin()+"**")
                     .append(" a ")
-                    .append(rqsv043.getFin())
-                    .append(". <br/>");
+                    .append("**"+rqsv043.getFin()+"**")
+                    .append(".\n\n");
 
             proyecto.setFin(rqsv043.getFin());
         }

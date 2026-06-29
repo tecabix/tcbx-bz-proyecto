@@ -144,10 +144,18 @@ public class Proyecto004BZ {
 			return rsb032.notFound("No se encontro el trabjador.");
 		}
 		
-		String etapaVieja = proyecto.getEtapa().getNombre();
+		String etapaVieja = proyecto.getEtapa().getNombre()
+            .toLowerCase()
+            .replace("_", " ");
+		etapaVieja = Character.toUpperCase(etapaVieja.charAt(0))
+                    + etapaVieja.substring(1);
 		
 		proyecto.setEtapa(etapa);
-		String etapaNueva = proyecto.getEtapa().getNombre();
+		String etapaNueva = proyecto.getEtapa().getNombre()
+	            .toLowerCase()
+	            .replace("_", " ");
+		etapaNueva = Character.toUpperCase(etapaNueva.charAt(0))
+	            + etapaNueva.substring(1);
 		proyecto.setIdUsuarioModificado(sesion.getUsuario().getId());
 		proyecto.setFechaModificado(LocalDateTime.now());
 		proyectoRepository.save(proyecto);
@@ -155,7 +163,7 @@ public class Proyecto004BZ {
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setClave(UUID.randomUUID());
-		comentario.setComentario("Se cambio la etapa de "+etapaVieja+" a "+etapaNueva+".");
+		comentario.setComentario("Se cambio la etapa de **"+etapaVieja+"** a **"+etapaNueva+"**.");
 		comentario.setFechaCreacion(LocalDateTime.now());
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setIdUsuarioModificado(sesion.getUsuario().getId());

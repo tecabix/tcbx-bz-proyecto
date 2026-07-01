@@ -122,6 +122,12 @@ public class Proyecto005BZ {
             .replace("_", " ");
 		estatusNuevo = Character.toUpperCase(estatusNuevo.charAt(0))
 	            + estatusNuevo.substring(1);
+		String etapaTxt = proyecto.getEtapa().getNombre()
+	            .toLowerCase()
+	            .replace("_", " ");
+		etapaTxt = Character.toUpperCase(etapaTxt.charAt(0))
+                + etapaTxt.substring(1);
+
 		proyecto.setIdUsuarioModificado(sesion.getUsuario().getId());
 		proyecto.setFechaModificado(LocalDateTime.now());
 		proyectoRepository.save(proyecto);
@@ -129,7 +135,7 @@ public class Proyecto005BZ {
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setUsuarioCreador(sesion.getUsuario().getId());
 		comentario.setClave(UUID.randomUUID());
-		comentario.setComentario("Se cambio el estatus de **"+estatusViejo+"** a **"+estatusNuevo+"**.");
+		comentario.setComentario("Se cambio el estatus de **"+estatusViejo+"** a **"+estatusNuevo+"** en la etapa de **"+etapaTxt+"**.");
 		comentario.setFechaCreacion(LocalDateTime.now());
 		comentario.setFechaModificado(LocalDateTime.now());
 		comentario.setIdUsuarioModificado(sesion.getUsuario().getId());
